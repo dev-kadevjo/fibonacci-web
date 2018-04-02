@@ -2,13 +2,6 @@
     "name": "kadevjo/fibonacci",
     "description": "Extension Voyager Library",
     "type": "library",
-    "version": "0.0.1",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url":  "git@bitbucket.org:kadevjo/fibonacci-web.git"
-        }
-    ],
     "require": {
         "php": "5.4.0",
         "illuminate/support": "4.*|5.*"
@@ -38,5 +31,5 @@
             "email": "ever.castro@kadevjo.com"
         }
     ],
-    "minimum-stability": "stable"
+    "minimum-stability": "dev"
 }
