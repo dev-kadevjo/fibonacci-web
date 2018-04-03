@@ -40,9 +40,9 @@ use Intervention\Image\Constraint;
 use Intervention\Image\Facades\Image;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\Filter;
-use TCG\Voyager\Http\Controllers\VoyagerAPIController;
+use TCG\Voyager\Http\Controllers\Controller;
 
-class APIController extends VoyagerAPIController
+class APIController extends Controller
 {
     use BreadRelationshipParser;
 
