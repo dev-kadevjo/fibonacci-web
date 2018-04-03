@@ -3,6 +3,7 @@
 namespace Kadevjo\Fibonacci;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Filesystem\Filesystem;
 
 class FibonacciServiceProvider extends ServiceProvider
 {
