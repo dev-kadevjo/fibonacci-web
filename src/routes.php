@@ -1,6 +1,8 @@
 <?php
 use TCG\Voyager\Events\Routing;
 use TCG\Voyager\Events\RoutingAdmin;
+use TCG\Voyager\Events\RoutingAfter;
+use TCG\Voyager\Events\RoutingAdminAfter;
 use TCG\Voyager\Models\DataType;
 /*
 |--------------------------------------------------------------------------
@@ -16,5 +18,11 @@ use TCG\Voyager\Models\DataType;
 // Database Routes
 Route::group(['as' => 'voyager.'], function () {
     event(new Routing());
-    Route::resource('database', '\\Kadevjo\\Fibonacci\\Controllers\\DatabaseController');
+    $namespacePrefix='\\Kadevjo\\Fibonacci\\Controllers\\';
+    Route::group(['middleware' => 'admin.user'], function () use ($namespacePrefix) {
+        event(new RoutingAdmin());
+        Route::resource('database', "{$namespacePrefix}DatabaseController");
+        event(new RoutingAdminAfter());
+    });
+    event(new RoutingAfter());
 });
