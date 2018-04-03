@@ -13,7 +13,7 @@ class FibonacciServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        
+        include __DIR__."routes.php";
     }
     /**
      * Register the application services.
@@ -22,8 +22,7 @@ class FibonacciServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->make('Kadevjo\Fibonacci\Controllers\APIController');
-        $this->app->make('Kadevjo\Fibonacci\Controllers\DatabaseController');
+
     }
     
     public function provides() {
