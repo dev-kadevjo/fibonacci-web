@@ -21,7 +21,7 @@ use TCG\Voyager\Events\TableDeleted;
 use TCG\Voyager\Events\TableUpdated;
 use TCG\Voyager\Facades\Voyager;
 use TCG\Voyager\Models\DataRow;
-use TCG\Voyager\Models\ApiConfig;
+use Kadevjo\Fibonacci\Models\ApiConfig;
 use TCG\Voyager\Models\DataType;
 use TCG\Voyager\Models\Permission;
 use TCG\Voyager\Http\Controllers\VoyagerDatabaseController;
@@ -48,7 +48,7 @@ class DatabaseController extends VoyagerDatabaseController
             $value->api = ApiConfig::where('table_name', '=', $value->name)->count();
         }
 
-        return Voyager::view('voyager::tools.database.index')->with(compact('dataTypes', 'tables'));
+        return Voyager::view('fibonacci::Enhances.Database.index')->with(compact('dataTypes', 'tables'));
     }
 
     /**
