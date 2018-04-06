@@ -29,7 +29,7 @@ use TCG\Voyager\Events\TableAdded;
 use TCG\Voyager\Events\TableDeleted;
 use TCG\Voyager\Events\TableUpdated;
 use TCG\Voyager\Models\DataRow;
-use TCG\Voyager\Models\ApiConfig;
+use Kadevjo\Fibonacci\Models\ApiConfig;
 use TCG\Voyager\Models\DataType;
 use TCG\Voyager\Models\Permission;
 use TCG\Voyager\Models\Binnacle;
@@ -296,7 +296,7 @@ class APIController extends BaseVoyagerController
         $data = new ApiConfig;
         $newRow = $data->makeJson(null);
 
-        return Voyager::view('voyager::tools.api.edit-add-api', compact('table', 'newRow'));
+        return view('fibonacci::enhances.api.edit-add-api', compact('table', 'newRow'));
     }
     
     public function storeAPI(Request $request) {
@@ -323,8 +323,8 @@ class APIController extends BaseVoyagerController
         Voyager::canOrFail('browse_database');
 
         $dataRow = ApiConfig::where('table_name', '=', $table)->orderBy('created_at', 'desc')->first();
-
-        return Voyager::view('voyager::tools.api.edit-add-api', compact('table', 'dataRow'));
+        
+        return view('fibonacci::enhances.api.edit-add-api', compact('table', 'dataRow'));
     }
 
     public function updateAPI(Request $request, $id) {
