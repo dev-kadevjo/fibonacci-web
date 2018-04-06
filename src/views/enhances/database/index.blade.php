@@ -6,7 +6,7 @@
     <h1 class="page-title">
         <i class="voyager-data"></i> {{ __('voyager.generic.database') }}
         <a href="{{ route('voyager.database.create') }}" class="btn btn-success"><i class="voyager-plus"></i>
-            {{ __('voyager.database.create_new_table') }}</a>
+            {{ __('fibonacci.database.create_new_table') }}</a>
     </h1>
 @stop
 
@@ -20,9 +20,9 @@
                 <table class="table table-striped database-tables">
                     <thead>
                         <tr>
-                            <th>{{ __('voyager.database.table_name') }}</th>
-                            <th>{{ __('voyager.database.bread_crud_actions') }}</th>
-                            <th style="text-align:right">{{ __('voyager.database.table_actions') }}</th>
+                            <th>{{ __('fibonacci.database.table_name') }}</th>
+                            <th>{{ __('fibonacci.database.bread_crud_actions') }}</th>
+                            <th style="text-align:right">{{ __('fibonacci.database.table_actions') }}</th>
                         </tr>
                     </thead>
 
@@ -47,35 +47,35 @@
                             @if($table->dataTypeId)
                                 <a href="{{ route('voyager.' . $table->slug . '.index') }}"
                                    class="btn-sm btn-warning browse_bread">
-                                    <i class="voyager-plus"></i> {{ __('voyager.database.browse_bread') }}
+                                    <i class="voyager-plus"></i> {{ __('fibonacci.database.browse_bread') }}
                                 </a>
                                 <a href="{{ route('voyager.database.bread.edit', $table->name) }}"
                                    class="btn-sm btn-default edit">
-                                   {{ __('voyager.database.edit_bread') }}
+                                   {{ __('fibonacci.database.edit_bread') }}
                                 </a>
                                 <div data-id="{{ $table->dataTypeId }}" data-name="{{ $table->name }}"
                                      class="btn-sm btn-danger delete" style="display:inline">
-                                     {{ __('voyager.database.delete_bread') }}
+                                     {{ __('fibonacci.database.delete_bread') }}
                                 </div>
                             @else
                                 <a href="{{ route('voyager.database.bread.create', ['name' => $table->name]) }}"
                                    class="btn-sm btn-default">
-                                    <i class="voyager-plus"></i> {{ __('voyager.database.add_bread') }}
+                                    <i class="voyager-plus"></i> {{ __('fibonacci.database.add_bread') }}
                                 </a>
                             @endif
                             @if ($table->api>0)
-                                <a href="{{ route('voyager.database.api.edit', $table->name) }}"
+                                <a href="#"
                                    class="btn-sm btn-success api">
-                                   {{ __('voyager.database.edit_api_button') }}
+                                   {{ __('fibonacci.database.edit_api_button') }}
                                 </a>
                                 <div api data-id="{{ $table->name }}" data-name="{{ $table->name }}"
                                      class="btn-sm btn-danger delete" style="display:inline">
-                                     {{ __('voyager.database.delete_api') }}
+                                     {{ __('fibonacci.database.delete_api') }}
                                 </div>
                             @else
-                                <a href="{{ route('voyager.database.api.create', $table->name) }}"
+                                <a href="#"
                                    class="btn-sm btn-default api">
-                                   {{ __('voyager.database.add_api') }}
+                                   {{ __('fibonacci.database.add_api') }}
                                 </a>
                             @endif
                             </div>
@@ -109,13 +109,13 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('voyager.generic.close') }}"><span
                                 aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title"><i class="voyager-trash"></i>  <span id="msg_modal_delete">{!! __('voyager.database.delete_table_bread_quest', ['table' => '<span id="delete_builder_name"></span>']) !!}</span> </h4>
+                    <h4 class="modal-title"><i class="voyager-trash"></i>  <span id="msg_modal_delete">{!! __('fibonacci.database.delete_table_bread_quest', ['table' => '<span id="delete_builder_name"></span>']) !!}</span> </h4>
                 </div>
                 <div class="modal-footer">
                     <form action="{{ route('voyager.database.bread.delete', ['id' => null]) }}" id="delete_builder_form" method="POST">
                         {{ method_field('DELETE') }}
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <input type="submit" class="btn btn-danger" value="{{ __('voyager.database.delete_table_bread_conf') }}">
+                        <input type="submit" class="btn btn-danger" value="{{ __('fibonacci.database.delete_table_bread_conf') }}">
                     </form>
                     <button type="button" class="btn btn-outline pull-right" data-dismiss="modal">{{ __('voyager.generic.cancel') }}</button>
                 </div>
@@ -129,13 +129,13 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('voyager.generic.close') }}"><span
                                 aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title"><i class="voyager-trash"></i> {!! __('voyager.database.delete_table_bread_quest', ['table' => '<span id="delete_table_name"></span>']) !!}</h4>
+                    <h4 class="modal-title"><i class="voyager-trash"></i> {!! __('fibonacci.database.delete_table_bread_quest', ['table' => '<span id="delete_table_name"></span>']) !!}</h4>
                 </div>
                 <div class="modal-footer">
                     <form action="{{ route('voyager.database.destroy', ['database' => '__database']) }}" id="delete_table_form" method="POST">
                         {{ method_field('DELETE') }}
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <input type="submit" class="btn btn-danger pull-right" value="{{ __('voyager.database.delete_table_confirm') }}">
+                        <input type="submit" class="btn btn-danger pull-right" value="{{ __('fibonacci.database.delete_table_confirm') }}">
                         <button type="button" class="btn btn-outline pull-right" style="margin-right:10px;"
                                 data-dismiss="modal">{{ __('voyager.generic.cancel') }}
                         </button>
@@ -158,12 +158,12 @@
                     <table class="table table-striped">
                         <thead>
                         <tr>
-                            <th>{{ __('voyager.database.field') }}</th>
-                            <th>{{ __('voyager.database.type') }}</th>
-                            <th>{{ __('voyager.database.null') }}</th>
-                            <th>{{ __('voyager.database.key') }}</th>
-                            <th>{{ __('voyager.database.default') }}</th>
-                            <th>{{ __('voyager.database.extra') }}</th>
+                            <th>{{ __('fibonacci.database.field') }}</th>
+                            <th>{{ __('fibonacci.database.type') }}</th>
+                            <th>{{ __('fibonacci.database.null') }}</th>
+                            <th>{{ __('fibonacci.database.key') }}</th>
+                            <th>{{ __('fibonacci.database.default') }}</th>
+                            <th>{{ __('fibonacci.database.extra') }}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -209,7 +209,7 @@
                 id = $(this).data('id');
                 name = $(this).data('name');
                 urlBREAD = '{{ route('voyager.database.bread.delete', ['id' => null]) }}';
-                urlAPI = '{{ route('voyager.database.api.delete', ['id' => null]) }}';
+                urlAPI = '#';
 
                 var attr = $(this).attr('api');
                 var txt = $('#msg_modal_delete');
@@ -250,7 +250,7 @@
             $('td.actions').on('click', '.delete_table', function (e) {
                 table = $(this).data('table');
                 if ($(this).hasClass('remove-bread-warning')) {
-                    toastr.warning('{{ __('voyager.database.delete_bread_before_table') }}');
+                    toastr.warning('{{ __('fibonacci.database.delete_bread_before_table') }}');
                 } else {
                     $('#delete_table_name').text(table);
                     $('#delete_table_form')[0].action = $('#delete_table_form')[0].action.replace('__database', table);

@@ -48,7 +48,7 @@ class DatabaseController extends VoyagerDatabaseController
             $value->api = ApiConfig::where('table_name', '=', $value->name)->count();
         }
 
-        return Voyager::view('fibonacci::Enhances.Database.index')->with(compact('dataTypes', 'tables'));
+        return view('fibonacci::enhances.database.index')->with(compact('dataTypes', 'tables'));
     }
 
     /**

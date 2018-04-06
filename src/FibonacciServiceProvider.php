@@ -13,7 +13,8 @@ class FibonacciServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'fibonacci');
+        $this->loadViewsFrom(__DIR__.'/views', 'fibonacci');
     }
     /**
      * Register the application services.
@@ -27,6 +28,7 @@ class FibonacciServiceProvider extends ServiceProvider
         });
 
         if ($this->app->runningInConsole()) {
+            $this->registerPublishables();
             $this->registerConsoleCommands();
         }
     }
@@ -38,5 +40,12 @@ class FibonacciServiceProvider extends ServiceProvider
     private function registerConsoleCommands()
     {
         $this->commands(Commands\InstallCommand::class);
+    }
+    
+    private function registerPublishables()
+    {
+        $publishablePath = dirname(__DIR__).'/resources';
+        $path = ["{$publishablePath}/lang/" => base_path('resources/lang/')];
+        $this->publishes($path,'lang');
     }
 }
