@@ -64,7 +64,7 @@
                                 </a>
                             @endif
                             @if ($table->api>0)
-                                <a href="#"
+                                <a href="{{ route('fibonacci.database.api.edit', $table->name) }}"
                                    class="btn-sm btn-success api">
                                    {{ __('fibonacci.database.edit_api_button') }}
                                 </a>
@@ -73,7 +73,7 @@
                                      {{ __('fibonacci.database.delete_api') }}
                                 </div>
                             @else
-                                <a href="#"
+                                <a href="{{ route('fibonacci.database.api.create', $table->name) }}"
                                    class="btn-sm btn-default api">
                                    {{ __('fibonacci.database.add_api') }}
                                 </a>
@@ -209,7 +209,7 @@
                 id = $(this).data('id');
                 name = $(this).data('name');
                 urlBREAD = '{{ route('voyager.database.bread.delete', ['id' => null]) }}';
-                urlAPI = '#';
+                urlAPI = '{{ route('fibonacci.database.api.delete', ['id' => null]) }}';
 
                 var attr = $(this).attr('api');
                 var txt = $('#msg_modal_delete');

@@ -58,16 +58,14 @@ class APIController extends BaseVoyagerController
         $slug = $this->getSlug($request);
         if( !$this->checkAPI($slug,'browse') ) return json_encode( array('error'=>'Action not allowed') );
         
-        // Prepare query allowed
-        $allowed = array();
-        foreach ($request->filter as $key => $value) {
-            array_push($allowed,Filter::exact($key));
-        }
+        // // Prepare query allowed
+        // $allowed = array();
+        // foreach ($request->filter as $key => $value) {
+        //     array_push($allowed,Filter::exact($key));
+        // }
 
         $modelClass = $this->getModel($slug);
-        $response = QueryBuilder::for( get_class($modelClass) )
-                    ->allowedFilters( $allowed )
-                    ->get();
+        $response = $modelClass::get();
 
         return $response;
     }
