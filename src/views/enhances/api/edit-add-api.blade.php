@@ -108,7 +108,7 @@
                     </div><!-- .panel -->
 
 
-                    <button type="submit" class="btn pull-right btn-primary">{{ __('fibonacci.generic.submit') }}</button>
+                    <button type="submit" class="btn pull-right btn-primary">{{ __('voyager.generic.submit') }}</button>
 
                 </form>
             </div><!-- .col-md-12 -->
@@ -199,7 +199,7 @@
                         for (var i = window.invalidEditors.length - 1; i >= 0; i--) {
                             $('#'+window.invalidEditors[i]).siblings('.validation-error').show();
                         }
-                        toastr.error('{{ __('fibonacci.json.invalid_message') }}', '{{ __('fibonacci.json.validation_errors') }}', {"preventDuplicates": true, "preventOpenDuplicates": true});
+                        toastr.error('{{ __('voyager.json.invalid_message') }}', '{{ __('voyager.json.validation_errors') }}', {"preventDuplicates": true, "preventOpenDuplicates": true});
                     } else {
                         if (_session.getValue()) {
                             // uglify JSON object and update textarea for submit purposes
@@ -297,7 +297,7 @@
             var tbl = dropdown.data('table');
             var selected_value = dropdown.data('selected');
             if(tbl.length != 0){
-                $.get('{{ route('fibonacci.database.index', [], false) }}/' + tbl, function(data){
+                $.get('{{ route('voyager.database.index', [], false) }}/' + tbl, function(data){
                     $(dropdown).empty();
                     for (var option in data) {
                        $('<option/>', {

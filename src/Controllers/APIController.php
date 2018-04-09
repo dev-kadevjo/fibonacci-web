@@ -6,7 +6,6 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
@@ -48,15 +47,14 @@ class APIController extends BaseVoyagerController
 
     public function __construct(Request $request){
 
-        $slug = $this->getSlug($request);
-        $this->middleware('auth:api')->only( $this->makeSecure($slug) );       
-
+        //$slug = $this->getSlug($request);
+        //$this->middleware('auth:api')->only( $this->makeSecure($slug) );
     }
     
     // Browse
     public function index(Request $request){
         $slug = $this->getSlug($request);
-        if( !$this->checkAPI($slug,'browse') ) return json_encode( array('error'=>'Action not allowed') );
+        if( !$this->checkAPI($slug,'browse') ) return  response()->json(array('error'=>'Action not allowed') );
         
         // // Prepare query allowed
         // $allowed = array();
@@ -73,16 +71,17 @@ class APIController extends BaseVoyagerController
     // Read
     public function show(Request $request, $id){
         $slug = $this->getSlug($request);
-        if( !$this->checkAPI($slug,'read') ) return json_encode( array('error'=>'Action not allowed') );
+        if( !$this->checkAPI($slug,'read') ) return response()->json( array('error'=>'Action not allowed') );
         
         $modelClass = $this->getModel($slug);
-        return $modelClass::find($id);
+        $model = $modelClass::find($id);
+        return $model??response()->json(array('error'=>'WHOOPS! Nothing here, please try again'));  
     }
 
     // Udate
     public function update(Request $request, $id){ 
         $slug = $this->getSlug($request); // table name
-        if( !$this->checkAPI($slug,'edit') ) return json_encode( array('error'=>'Action not allowed') );
+        if( !$this->checkAPI($slug,'edit') ) return response()->json( array('error'=>'Action not allowed') );
 
         $modelClass = $this->getModel($slug);
         $update = $modelClass::find($id);
@@ -108,16 +107,16 @@ class APIController extends BaseVoyagerController
         
         if( $update->forceFill($requestData)->save() ){
             $this->insertBinnacle($slug,'update','A record was updated - id: '.$id,'api');
-            return json_encode( array('state'=>'success') );
+            return response()->json( array('state'=>'success') );
         }else{
-            return json_encode( array('state'=>'error') );
+            return response()->json( array('state'=>'error') );
         }               
     }
     
     // Insert    
     public function store(Request $request){
         $slug = $this->getSlug($request);
-        if( !$this->checkAPI($slug,'add') ) return json_encode( array('error'=>'Action not allowed') );
+        if( !$this->checkAPI($slug,'add') ) return response()->json( array('error'=>'Action not allowed') );
 
         $modelClass = $this->getModel($slug);
         $requestData = $request->all();
@@ -131,15 +130,15 @@ class APIController extends BaseVoyagerController
 
         $restrict = config('voyager.restrict');
         foreach ($requestData as $key => $value) {
-            if( in_array($key, $restrict))
+            if($restrict && in_array($key, $restrict))
                 unset($requestData[$key]);
         }
         
         if( $modelClass->forceFill($requestData)->save() ){
-            $this->insertBinnacle($slug,'create','New record inserted','api');
-            return json_encode( array('state'=>'success') );
+            //$this->insertBinnacle($slug,'create','New record inserted','api');
+            return response()->json( array('state'=>'success') );
         }else{
-            return json_encode( array('state'=>'error') );
+            return response()->json( array('state'=>'error') );
         }           
     }
 
@@ -174,16 +173,16 @@ class APIController extends BaseVoyagerController
     // Delete
     public function destroy(Request $request, $id){
         $slug = $this->getSlug($request);        
-        if( !$this->checkAPI($slug,'delete') ) return json_encode( array('error'=>'Action not allowed') );
+        if( !$this->checkAPI($slug,'delete') ) return response()->json( array('error'=>'Action not allowed') );
         
         $modelClass = $this->getModel($slug);
         $remove = $modelClass::find($id);
 
         if( $remove->delete() ){
             $this->insertBinnacle($slug,'delete','Record deleted - id: '.$id,'api');
-            return json_encode( array('state'=>'success') );
+            return response()->json( array('state'=>'success') );
         }else{
-            return json_encode( array('state'=>'error') );
+            return response()->json( array('state'=>'error') );
         } 
     }
 
