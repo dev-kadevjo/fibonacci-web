@@ -37,8 +37,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Constraint;
 use Intervention\Image\Facades\Image;
-use Spatie\QueryBuilder\QueryBuilder;
-use Spatie\QueryBuilder\Filter;
 use TCG\Voyager\Http\Controllers\Controller as BaseVoyagerController;
 
 class APIController extends BaseVoyagerController
@@ -47,23 +45,38 @@ class APIController extends BaseVoyagerController
 
     public function __construct(Request $request){
 
-        //$slug = $this->getSlug($request);
-        //$this->middleware('auth:api')->only( $this->makeSecure($slug) );
+        if(count($request->segments())>0){
+            $slug = $this->getSlug($request);
+            $this->middleware('auth:api')->only( $this->makeSecure($slug) );
+        }
     }
     
     // Browse
     public function index(Request $request){
+        
         $slug = $this->getSlug($request);
+
         if( !$this->checkAPI($slug,'browse') ) return  response()->json(array('error'=>'Action not allowed') );
         
-        // // Prepare query allowed
-        // $allowed = array();
-        // foreach ($request->filter as $key => $value) {
-        //     array_push($allowed,Filter::exact($key));
-        // }
-
         $modelClass = $this->getModel($slug);
-        $response = $modelClass::get();
+        
+        if($request->has('filter'))
+        {
+            $filters = json_decode($request->input('filter'));
+            
+            $query = $modelClass::query();
+
+            foreach ($filters as $filter)
+            {
+                call_user_func_array( array($query, $filter->method), $filter->parameters );
+            }
+            
+            $response = $query->get();
+        }
+        else
+        {
+            $response = $modelClass::get();
+        }
 
         return $response;
     }
@@ -106,7 +119,7 @@ class APIController extends BaseVoyagerController
         }
         
         if( $update->forceFill($requestData)->save() ){
-            $this->insertBinnacle($slug,'update','A record was updated - id: '.$id,'api');
+            //$this->insertBinnacle($slug,'update','A record was updated - id: '.$id,'api');
             return response()->json( array('state'=>'success') );
         }else{
             return response()->json( array('state'=>'error') );
@@ -135,7 +148,7 @@ class APIController extends BaseVoyagerController
         }
         
         if( $modelClass->forceFill($requestData)->save() ){
-            //$this->insertBinnacle($slug,'create','New record inserted','api');
+            ////$this->insertBinnacle($slug,'create','New record inserted','api');
             return response()->json( array('state'=>'success') );
         }else{
             return response()->json( array('state'=>'error') );
@@ -179,7 +192,7 @@ class APIController extends BaseVoyagerController
         $remove = $modelClass::find($id);
 
         if( $remove->delete() ){
-            $this->insertBinnacle($slug,'delete','Record deleted - id: '.$id,'api');
+            //$this->insertBinnacle($slug,'delete','Record deleted - id: '.$id,'api');
             return response()->json( array('state'=>'success') );
         }else{
             return response()->json( array('state'=>'error') );
