@@ -7,9 +7,12 @@ use TCG\Voyager\Models\DataType;
 use TCG\Voyager\Database\Schema\SchemaManager;
 
 $namespacePrefix='\\Kadevjo\\Fibonacci\\Controllers\\';
-Route::group(['as' => 'fibonacci.'], function ()use ($namespacePrefix) {
-    try {
-        foreach (SchemaManager::listTableNames() as $value) {
+Route::group(['as' => 'fibonacci.'], function ()use ($namespacePrefix) 
+{
+    try 
+    {
+        foreach (SchemaManager::listTableNames() as $value) 
+        {
             $breadController =  $namespacePrefix.'APIController';
             Route::resource($value, $breadController);
         }
@@ -18,7 +21,12 @@ Route::group(['as' => 'fibonacci.'], function ()use ($namespacePrefix) {
     {
         throw new \InvalidArgumentException('Custom routes hasnt been configured because: '.$e->getMessage(), 1);
     }
-    catch (\Exception $e) {
+    catch (\Exception $e) 
+    {
         // do nothing, might just be because table not yet migrated.
-    }});
-    Route::post('/getPublicToken',$namespacePrefix.'APIController@getToken');
+    }
+
+    Route::post('/login-social',$namespacePrefix.'AuthAPIController@socialAuth');
+});
+
+Route::post('/getPublicToken',$namespacePrefix.'APIController@getToken');

@@ -44,8 +44,12 @@ class FibonacciServiceProvider extends ServiceProvider
     
     private function registerPublishables()
     {
-        $publishablePath = dirname(__DIR__).'/resources';
+        $publishablePath = dirname(__DIR__).'/src/resources';
         $path = ["{$publishablePath}/lang/" => base_path('resources/lang/')];
         $this->publishes($path,'lang');
+
+        $publishablePath = dirname(__DIR__).'/src/config';
+        $path = ["{$publishablePath}/fibonacci.php" => config_path('fibonacci')];
+        $this->publishes($path,'config');
     }
 }
