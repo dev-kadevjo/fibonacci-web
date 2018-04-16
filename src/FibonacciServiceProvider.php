@@ -49,7 +49,7 @@ class FibonacciServiceProvider extends ServiceProvider
         $this->publishes($path,'lang');
 
         $publishablePath = dirname(__DIR__).'/src/config';
-        $path = ["{$publishablePath}/fibonacci.php" => config_path('fibonacci')];
+        $path = ["{$publishablePath}/fibonacci.php" => config_path('fibonacci.php')];
         $this->publishes($path,'config');
     }
 }

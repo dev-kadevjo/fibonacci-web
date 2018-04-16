@@ -9,46 +9,46 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Kadevjo\Fibonacci\Fibonacci;
+use Kadevjo\Fibonacci\Models\Client as User;
 use Validator;
 
 class AuthAPIController extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     
-    public function socialAuth()
+    public function socialAuth(Request $request)
     {
         $validator = Validator::make($request->json()->all(), [
-            'socialID'  => 'required',
             'provider' => 'required',
-            'access_token' => 'required'
+            'socialID'  => 'required',
+            'token' => 'required'
         ]);
 
         if( $validator->fails() ) {
-            return ResponseHelper::GetResponse('not_enough_data');
+            return response()->json( array('error'=>'not enough data'));
         }
 
-        $socialID = $request->json('socialID');
         $provider = $request->json('provider');
-        $access_token = $request->json('access_token');
+        $socialID = $request->json('socialID');
+        $token = $request->json('token');
 
-        $account = Fibonacci::authenticateSocial($socialID, $provider, $access_token);
-
-        $user = User::withTrashed()->whereNotNull('email')->where('email', $account->email)->first();
+        $account =  Fibonacci::authenticateSocial($provider, $socialID, $token);
+        
+        $user = User::whereNotNull('email')->where('email', $account->email)->first();
 
         if( $user == null ) {
             $user = new User();
             $user->first_name = $account->first_name;
             $user->last_name = $account->last_name;
             $user->email = $account->email;
-            $user->picture = $account->picture;
+            $user->avatar = $account->picture;
             $user->save();
         }
-        
-        $user = $user;
 
-        $token = $user->createToken('Laravel Personal Access Client');
+        $token = $user->createToken(config('fibonacci.auth-social.passport.token'));
 
-        return response()->json($token);
+        return response()->json(['accessToken'=>$token->accessToken]);
 
     }
 }

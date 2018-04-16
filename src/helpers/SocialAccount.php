@@ -35,9 +35,12 @@ class SocialAccount
     {
         if( !array_key_exists('oauth_token',$token) || !array_key_exists('oauth_token_secret',$token) ) throw new ConfigException("An error ocurred");
 
-        $newRequest = "account/verify_credentials.json/include_email=true";
+        $newRequest = "account/verify_credentials.json?include_email=true";
 
         $stack = HandlerStack::create();
+        if( is_null(config('fibonacci.auth-social.providers.twitter.consumer_key'))
+        || is_null(config('fibonacci.auth-social.providers.twitter.consumer_secret'))
+         ) throw new ConfigException("An error ocurred");
 
         $middleware = new Oauth1([
             'consumer_key'    => config('fibonacci.auth-social.providers.twitter.consumer_key'),
@@ -47,6 +50,7 @@ class SocialAccount
         ]);
 
         $stack->push($middleware);
+        
         $client = new Client([
             'base_uri' => 'https://api.twitter.com/1.1/',
             'handler' => $stack
@@ -54,26 +58,37 @@ class SocialAccount
 
         // Set the "auth" request option to "oauth" to sign using oauth
         $response = $client->get($newRequest, ['auth' => 'oauth']);
+
         $content = json_decode($response->getBody()->getContents());
+
         $email = $content->email;
+
         $picture = str_replace("_normal.", ".", $content->profile_image_url_https);
-        $first_name = $content->first_name;
-        $last_name = $content->last_name;
-        return json_decode(json_encode(array('email'=>$email, 'picture'=>$picture, 'first_name'=>$first_name,'last_name'=>$last_name)), FALSE);
+
+        $first_name = $content->name;
+
+        return json_decode(json_encode(array('email'=>$email, 'picture'=>$picture, 'first_name'=>$first_name,'last_name'=>null)), FALSE);
 
     }
 
     public static function outlookAuth($userId, $token)
     {
-        if( !array_key_exists('access_token',$token) ) throw new ConfigException("An error ocurred");        
+        if( !array_key_exists('access_token',$token) ) throw new ConfigException("An error ocurred");
         
-        $newRequest = "https://outlook.office.com/api/v2.0/me";
+        $newRequest = "https://graph.microsoft.com/v1.0/me";
+        
         $client = new Client(['headers' => ['Authorization' => 'Bearer '.$token['access_token']]]);
-        $response = $client->request('GET',$newRequest);
-        $content = json_decode($response->getBody()->getContents());
-        $email = $content->EmailAddress;
-        $username = $content->DisplayName;
-        return json_decode(json_encode(array('email'=>$email, 'picture'=>null, 'username'=>$username)), FALSE);
         
+        $response = $client->request('GET',$newRequest);
+        
+        $content = json_decode($response->getBody()->getContents());
+        
+        $email = $content->userPrincipalName;
+        
+        $first_name = $content->givenName;
+        
+        $last_name = $content->surname;
+
+        return json_decode(json_encode(array('email'=>$email, 'picture'=>null, 'first_name'=>$first_name,'last_name'=>$last_name)), FALSE);
     }
 }
