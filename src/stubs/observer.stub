@@ -1,0 +1,118 @@
+<?php
+namespace App\Observers;
+
+use App\DummyClass;
+
+class DummyClassObserver
+{
+    
+    /**
+     * Listen to the DummyClass creating event.
+     *
+     * @param  DummyClass  $DummyVariable
+     * @return void 
+     */
+    public function creating(DummyClass $DummyVariable)
+    {
+        //code-creating
+    }
+
+     /**
+     * Listen to the DummyClass created event.
+     *
+     * @param  DummyClass  $DummyVariable
+     * @return void
+     */
+    public function created(DummyClass $DummyVariable)
+    {
+        //code-created
+    }
+
+    /**
+     * Listen to the DummyClass updating event.
+     *
+     * @param  DummyClass  $DummyVariable
+     * @return void
+     */
+    public function updating(DummyClass $DummyVariable)
+    {
+        //code-updating
+    }
+
+    /**
+     * Listen to the DummyClass updated event.
+     *
+     * @param  DummyClass  $DummyVariable
+     * @return void
+     */
+    public function updated(DummyClass $DummyVariable)
+    {
+        //code-updated
+    }
+
+    /**
+     * Listen to the DummyClass saving event.
+     *
+     * @param  DummyClass  $DummyVariable
+     * @return void
+     */
+    public function saving(DummyClass $DummyVariable)
+    {
+        //code--saving
+    }
+
+    /**
+     * Listen to the DummyClass saved event.
+     *
+     * @param  DummyClass  $DummyVariable
+     * @return void
+     */
+    public function saved(DummyClass $DummyVariable)
+    {
+        //code-saved
+    }
+
+    /**
+     * Listen to the DummyClass deleting event.
+     *
+     * @param  DummyClass  $DummyVariable
+     * @return void
+     */
+    public function deleting(DummyClass $DummyVariable)
+    {
+        //code-deleting
+    }
+
+    /**
+     * Listen to the DummyClass deleted event.
+     *
+     * @param  DummyClass  $DummyVariable
+     * @return void
+     */
+    public function deleted(DummyClass $DummyVariable)
+    {
+        //code-deleted
+    }
+
+    /**
+     * Listen to the DummyClass restoring event.
+     *
+     * @param  DummyClass  $DummyVariable
+     * @return void
+     */
+    public function restoring(DummyClass $DummyVariable)
+    {
+        //code-restoring
+    }
+
+    /**
+     * Listen to the DummyClass restored event.
+     *
+     * @param  DummyClass  $DummyVariable
+     * @return void
+     */
+    public function restored(DummyClass $DummyVariable)
+    {
+        //code-restored
+    }
+}
