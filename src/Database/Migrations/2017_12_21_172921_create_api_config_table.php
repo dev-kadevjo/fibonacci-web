@@ -17,8 +17,14 @@ class CreateApiConfigTable extends Migration
             $table->increments('id');
             $table->string('table_name', 200);
             $table->text('config');
-            $table->longText('custom_code')->nullable();
-            $table->tinyInteger('execution');
+            $table->longText('creating_o')->nullable();
+            $table->longText('created_o')->nullable();
+            $table->longText('updating_o')->nullable();
+            $table->longText('updated_o')->nullable();
+            $table->longText('deleting_o')->nullable();
+            $table->longText('deleted_o')->nullable();
+            $table->longText('restoring_o')->nullable();
+            $table->longText('restored_o')->nullable();
             $table->timestamps();
         });
     }

@@ -395,7 +395,7 @@ class APIController extends BaseVoyagerController
         if (!$fileData->exists($observersDir)) {
             $fileData->makeDirectory($observersDir);
         }        
-        $observerStubContent = file_get_contents(__DIR__.'\..\stubs\observer.stub', true); 
+        $observerStubContent = file_get_contents(__DIR__.'/../stubs/observer.stub', true); 
         $observerStString = ["$model",ucwords($model)];
         $observerConstans = ["DummyVariable","DummyClass"];
         $observerText = str_replace($observerConstans, $observerStString, $observerStubContent);
@@ -431,7 +431,7 @@ class APIController extends BaseVoyagerController
 
     public function editObserver($model,$data){
         $observerDirectory = ucwords($model)."Observer";
-        $fname = base_path("\App\Observers\\".$observerDirectory.".php");      
+        $fname = base_path("App/Observers/".$observerDirectory.".php");      
         $fhandle = fopen($fname,"r");
         $content = fread($fhandle,filesize($fname));
         $observerStString = [($data->creating_o)==""?"//code-creating":" ".$data->creating_o, 
