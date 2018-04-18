@@ -21,6 +21,7 @@ return [
         'create_bread_for_table'    => 'Create BREAD for :table table',
         'create_migration'          => 'Create migration for this table?',
         'create_model_table'        => 'Create model for this table?',
+        'create_logger_table'       => 'Create log for this table?',
         'create_new_table'          => 'Create New Table',
         'create_your_new_table'     => 'Create Your New Table',
         'default'                   => 'Default',

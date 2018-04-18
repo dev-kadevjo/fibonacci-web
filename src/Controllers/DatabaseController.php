@@ -62,7 +62,7 @@ class DatabaseController extends VoyagerDatabaseController
 
         $db = $this->prepareDbManager('create');
 
-        return Voyager::view('voyager::tools.database.edit-add', compact('db'));
+        return Voyager::view('fibonacci::enhances.database.edit-add', compact('db'));
     }
 
     /**

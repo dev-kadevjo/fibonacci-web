@@ -113,7 +113,7 @@ class APIController extends BaseVoyagerController
         
         $restrict = config('voyager.restrict');
         foreach ($requestData as $key => $value) {
-            if( in_array($key, $restrict))
+            if($restrict && in_array($key, $restrict))
                 unset($requestData[$key]);
         }
         
@@ -130,6 +130,7 @@ class APIController extends BaseVoyagerController
         if( !$this->checkAPI($slug,'add') ) return response()->json( array('error'=>'Action not allowed') );
 
         $modelClass = $this->getModel($slug);
+
         $requestData = $request->all();
 
         // Check for images to upload
@@ -144,7 +145,6 @@ class APIController extends BaseVoyagerController
             if($restrict && in_array($key, $restrict))
                 unset($requestData[$key]);
         }
-        
         if( $modelClass->forceFill($requestData)->save() ){
             return response()->json( array('state'=>'success') );
         }else{
@@ -202,7 +202,7 @@ class APIController extends BaseVoyagerController
         try {
             $entity = "App\\".$name;
             $modelClass =  \App::make($entity);
-        } catch (Exception $e) {
+        }catch (Exception $e) {
             $entity = "TCG\Voyager\Models\\".$name;
             $modelClass =  \App::make($entity);
         }
