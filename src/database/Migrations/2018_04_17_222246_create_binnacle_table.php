@@ -17,6 +17,7 @@ class CreateBinnacleTable extends Migration
             $table->increments('id');
             $table->string('entity')->nullable();
             $table->string('action')->nullable();
+            $table->string('id_table')->nullable();
             $table->string('source')->nullable();
             $table->string('author')->nullable();
             $table->timestamps();

@@ -412,7 +412,7 @@ class APIController extends BaseVoyagerController
         $triStrign = str_replace(' ', '', "\App\ $name::observe(\App\Observers\ $name Observer::class);");
         
         if (strchr($content,"protected static function boot()",true) === false) {
-            $content = str_replace("{", '{  
+            $content = str_replace("use Loggable;", 'use Loggable; 
             /**
             * The "booting" method of the model. 
             *

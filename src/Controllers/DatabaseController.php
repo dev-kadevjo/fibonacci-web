@@ -25,6 +25,7 @@ use Kadevjo\Fibonacci\Models\ApiConfig;
 use TCG\Voyager\Models\DataType;
 use TCG\Voyager\Models\Permission;
 use TCG\Voyager\Http\Controllers\VoyagerDatabaseController;
+use Illuminate\Filesystem\Filesystem;
 
 class DatabaseController extends VoyagerDatabaseController
 {
@@ -80,9 +81,9 @@ class DatabaseController extends VoyagerDatabaseController
             Type::registerCustomPlatformTypes();
 
             $table = Table::make($request->table);
-            SchemaManager::createTable($table);
+            SchemaManager::createTable($table);            
 
-            if (isset($request->create_model) && $request->create_model == 'on') {
+            if (isset($request->create_model) && $request->create_model == 'on') { 
                 $modelNamespace = config('voyager.models.namespace', app()->getNamespace());
                 $params = [
                     'name' => $modelNamespace.Str::studly(Str::singular($table->name)),
@@ -98,6 +99,13 @@ class DatabaseController extends VoyagerDatabaseController
 
                 Artisan::call('voyager:make:model', $params);
 
+                if (isset($request->create_logger) ) {
+                    $nameModel = Str::singular($table->name);
+                    $this->editModelRW($nameModel , $request->create_logger);
+                }else{
+                    $nameModel = Str::singular($table->name);
+                    $this->editModelRW($nameModel , "off");
+                }
                 event(new TableAdded($table));
             } elseif (isset($request->create_migration) && $request->create_migration == 'on') {
                 Artisan::call('make:migration', [
@@ -105,6 +113,7 @@ class DatabaseController extends VoyagerDatabaseController
                     '--table' => $table->name,
                 ]);
             }
+            
 
             return redirect()
                ->route('voyager.database.index')
@@ -212,6 +221,8 @@ class DatabaseController extends VoyagerDatabaseController
 
             $params = ['name' => Str::studly(Str::singular($tableName))];
             Artisan::call('voyager:make:model', $params);
+            $nameModel = Str::singular($tableName);
+            $this->editModelRW($nameModel , "off");
         }
     }
 
@@ -485,5 +496,28 @@ class DatabaseController extends VoyagerDatabaseController
                 'message'    => 'Successfully deleted relationship.',
                 'alert-type' => 'success',
             ]);
+    }
+
+     public function editModelRW($name , $on){
+        $fname = base_path("app/".$name.".php");   
+         $fileData = new Filesystem();
+        if (!$fileData->exists($fname)) {
+           $fname = base_path("app\\".$name.".php");  
+        }   
+        $fhandle = fopen($fname,"r");
+        $content = fread($fhandle,filesize($fname));
+
+        if (strchr($content,"use Kadevjo\Fibonacci\Traits\Loggable;",true) === false) {
+            $content = str_replace("use Illuminate\Database\Eloquent\Model;", "use Illuminate\Database\Eloquent\Model;\nuse Kadevjo\Fibonacci\Traits\Loggable; ", $content);
+        }    
+        if($on =="on"){
+            $active = 'use Loggable;';
+        }else{
+            $active = "// use Loggable;";
+        }
+        $content = str_replace("{", "{\n \t$active ", $content);
+        $fhandle = fopen($fname,"w");
+        fwrite($fhandle,$content);
+        fclose($fhandle);
     }
 }

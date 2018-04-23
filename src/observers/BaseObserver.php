@@ -71,8 +71,9 @@ class BaseObserver
             }
             
             $author = is_null(\Auth::user())?null:\Auth::user()->email;
+            $id_table = $class->id;
             
-            $data = ["entity"=>$entity,"action"=>$method,"source"=>$source,"author"=>$author];
+            $data = ["entity"=>$entity,"action"=>$method,"source"=>$source,"author"=>$author, "id_table"=>$id_table];
             
             $this->saveLoggable($data);
         }

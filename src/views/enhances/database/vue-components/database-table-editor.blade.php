@@ -13,14 +13,15 @@
             </div>
 
         @if($db->action == 'create')
+        <div id = "example">
             <div class="col-md-3 col-sm-4 col-xs-6">
                 <label for="create_model">{{ __('voyager.database.create_model_table') }}</label><br>
-                <input type="checkbox" name="create_model" data-toggle="toggle"
+                <input type="checkbox" name="create_model" data-toggle="toggle" v-model="model_create"  id = "create"
                        data-on="{{ __('voyager.generic.yes_please') }}" data-off="{{ __('voyager.generic.no_thanks') }}">
                 </div>
             <div class="col-md-3 col-sm-4 col-xs-6">
                 <label for="create_logger">{{ __('fibonacci.database.create_logger_table') }}</label><br>
-                <input type="checkbox" name="create_logger" data-toggle="toggle"
+                <input type="checkbox" name="create_logger" data-toggle="toggle" v-model="log_create" id = "log"
                        data-on="{{ __('voyager.generic.yes_please') }}" data-off="{{ __('voyager.generic.no_thanks') }}">
             </div>
             {{--
@@ -31,6 +32,7 @@
                            data-on="{{ __('voyager.generic.yes_please') }}" data-off="{{ __('voyager.generic.no_thanks') }}">
                 </div>
             --}}
+        </div>
         @endif
         </div><!-- .panel-body .row -->
 
@@ -98,11 +100,30 @@
 @include('voyager::tools.database.vue-components.database-table-helper-buttons')
 
 <script>
+ $(function() {
+    $('#log').change(function() {
+        if($('#log').prop('checked')==true){
+            $('#create').prop('checked', true).change()
+        }        
+    });
+    $('#create').change(function() {
+        if($('#create').prop('checked')==false){
+            $('#log').prop('checked', false).change()
+        }     
+    })
+  });
     Vue.component('database-table-editor', {
         props: {
             table: {
                 type: Object,
                 required: true
+            }, 
+            model_create:{
+                type:Boolean
+
+            },
+            log_create:{
+                type:Boolean
             }
         },
         data() {
@@ -265,7 +286,7 @@
                     index.name = '';
                 }
             },
-            getCompositeIndexes() {
+            siteIndexes() {
                 let composite = [];
 
                 for (i in this.table.indexes) {
@@ -289,4 +310,7 @@
             }
         }
     });
+
+
+
 </script>
