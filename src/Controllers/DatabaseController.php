@@ -83,7 +83,7 @@ class DatabaseController extends VoyagerDatabaseController
             $table = Table::make($request->table);
             SchemaManager::createTable($table);            
 
-            if (isset($request->create_model) && $request->create_model == 'on') { 
+            if (isset($request->create_model) && ($request->create_model == 'on')) { 
                 $modelNamespace = config('voyager.models.namespace', app()->getNamespace());
                 $params = [
                     'name' => $modelNamespace.Str::studly(Str::singular($table->name)),
@@ -93,7 +93,7 @@ class DatabaseController extends VoyagerDatabaseController
                 //     $params['--softdelete'] = true;
                 // }
 
-                if (isset($request->create_migration) && $request->create_migration == 'on') {
+                if (isset($request->create_migration) && ($request->create_migration == 'on')) {
                     $params['--migration'] = true;
                 }
 
@@ -107,7 +107,7 @@ class DatabaseController extends VoyagerDatabaseController
                     $this->editModelRW($nameModel , "off");
                 }
                 event(new TableAdded($table));
-            } elseif (isset($request->create_migration) && $request->create_migration == 'on') {
+            } elseif (isset($request->create_migration) && ($request->create_migration == 'on')) {
                 Artisan::call('make:migration', [
                     'name'    => 'create_'.$table->name.'_table',
                     '--table' => $table->name,
