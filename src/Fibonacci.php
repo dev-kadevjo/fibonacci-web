@@ -25,7 +25,7 @@ class Fibonacci
     {
         $result = array();
 
-        switch($provider)
+        switch( strtolower($provider))
         {
             case self::FACEBOOK:
                 $result = SocialAccount::facebookAuth($socialID, $data);
