@@ -25,12 +25,24 @@ Route::group(['as' => 'fibonacci.'], function () {
             'as'     => 'database.api.',
             'prefix' => 'database',
         ], function () use ($namespacePrefix) {
-            Route::get('{table}/api/edit', ['uses' => $namespacePrefix.'APIController@addEditAPI', 'as' => 'edit']);
-            Route::put('api/{id}', ['uses' => $namespacePrefix.'APIController@updateAPI',  'as' => 'update']);
-            Route::get('{table}/api/create', ['uses' => $namespacePrefix.'APIController@addAPI',     'as' => 'create']);
-            Route::post('api', ['uses' => $namespacePrefix.'APIController@storeAPI',   'as' => 'store']);
-            Route::delete('api/{id}', ['uses' => $namespacePrefix.'APIController@deleteAPI',  'as' => 'delete']);
+            Route::get('{table}/api/edit', ['uses' => $namespacePrefix.'ManageAPIController@addEditAPI', 'as' => 'edit']);
+            Route::put('api/{id}', ['uses' => $namespacePrefix.'ManageAPIController@updateAPI',  'as' => 'update']);
+            Route::get('{table}/api/create', ['uses' => $namespacePrefix.'ManageAPIController@addAPI',     'as' => 'create']);
+            Route::post('api', ['uses' => $namespacePrefix.'ManageAPIController@storeAPI',   'as' => 'store']);
+            Route::delete('api/{id}', ['uses' => $namespacePrefix.'ManageAPIController@deleteAPI',  'as' => 'delete']);
         });
+
+        Route::group([
+            'as' => 'reports',
+            'prefix' => 'reports',
+        ], function () use ($namespacePrefix) {
+            Route::get('view', ['uses' => $namespacePrefix.'ReportsController@all', 'as' => 'all']);
+            Route::get('manage', ['uses' => $namespacePrefix.'ReportsController@manage', 'as' => 'manage']);
+            Route::post('update', ['uses' => $namespacePrefix.'ReportsController@update',  'as' => 'update']);
+            Route::post('store', ['uses' => $namespacePrefix.'ReportsController@store',   'as' => 'store']);
+            Route::delete('delete/{id}', ['uses' => $namespacePrefix.'ReportsController@delete',  'as' => 'delete']);
+        });
+
         event(new RoutingAdminAfter());
     });
     event(new RoutingAfter());

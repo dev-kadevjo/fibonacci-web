@@ -1,0 +1,7 @@
+{
+  "reports": {
+    "manage": "/reports/manage",
+    "reports": "/reports/view"
+  },
+  "binnacle": "/binnacle"
+}

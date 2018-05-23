@@ -42,14 +42,22 @@ class FibonacciServiceProvider extends ServiceProvider
         $this->commands(Commands\InstallCommand::class);
     }
     
-    private function registerPublishables()
-    {
-        $publishablePath = dirname(__DIR__).'/src/resources';
-        $path = ["{$publishablePath}/lang/" => base_path('resources/lang/')];
-        $this->publishes($path,'lang');
-
-        $publishablePath = dirname(__DIR__).'/src/config';
-        $path = ["{$publishablePath}/fibonacci.php" => config_path('fibonacci.php')];
-        $this->publishes($path,'config');
+    private function registerPublishables(){
+        $publishablePath = dirname(__DIR__).'/src/publishable';    
+        $publishable = [
+            'reports_assets' => [
+                "{$publishablePath}/css/reports.css" => public_path('css/reports.css'),
+                "{$publishablePath}/js/reports.js" => public_path('js/reports.js'),
+            ],
+            'config' => [
+            "{$publishablePath}/config/fibonacci.php" => config_path('fibonacci.php'),
+            ],
+            'lang' => [
+            "{$publishablePath}/lang/" => base_path('resources/lang/'),          
+            ],
+        ];
+        foreach ($publishable as $group => $paths) {
+            $this->publishes($paths, $group);
+        }
     }
 }

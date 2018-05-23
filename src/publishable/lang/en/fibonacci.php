@@ -1,6 +1,23 @@
 <?php
 
 return [
+    'reports' => [
+        'view'              => 'Reports',
+        'manage'            => 'Manage',
+        'title'             =>'Manage :name',
+        'success_update'    => 'Successfully updated',
+        'error_updating'    => 'Error updating report',
+        'delete_quest'      => 'Are you sure you want to delete this Report',
+        'delete'            => 'Yes, remove it',        
+        'error_removing'    => 'Sorry it appears there may have been a problem removing this Report',
+        'success_remove'    => 'Successfully removed',
+        'new_report'        => 'Creaating report',
+        'create'            => 'create',
+        'error_creating'    => 'Error creating Report',
+        'success_created'   => 'Successfully created',
+        'crash'             => 'Crashes',
+        'Viewtitle'         => 'Reports'
+    ],
     'database' => [
         'add_bread'                 => 'Add BREAD to this table',
         'add_api'                   => 'Create API',
