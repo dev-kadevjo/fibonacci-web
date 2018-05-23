@@ -3,6 +3,7 @@
 namespace Kadevjo\Fibonacci\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use TCG\Voyager\Http\Controllers\Controller as BaseVoyagerController;
 
 use GuzzleHttp\Client;
@@ -17,9 +18,9 @@ class ReportsController extends BaseVoyagerController{
     $data = Report::all();
     foreach ($data as $value) {      
       if($value->source === 'analytics'){
-        $value->query = $this->getData($value->query);
-      } else {
-        $value->query = 'consulta';
+        $value->query = $this->getData($value->query);        
+      } else if($value->source === 'db'){
+        $value->query = DB::select( DB::raw($value->query) ); // Danger
       }
     }
 

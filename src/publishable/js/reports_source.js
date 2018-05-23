@@ -1,10 +1,17 @@
-import toInteger from 'to-integer';
+import _ from 'lodash/object';
 import randomColor from 'random-color';
 import roundTo from 'round-to';
+import toInteger from 'to-integer';
 
 const getColor = () => randomColor(0.5, 0.7).alpha(0.5).rgbaString();
+const formatData = query => query.map(item => _.values(item));
 
 const initBar = ({ id, name, type, query, fields }) => {
+  // If the query is a query database, you need to format it
+  if (typeof query === 'object') {
+    query = formatData(query);
+  }
+
   const backgroundColor = query.map(() => getColor());
   const ctx = document.getElementById(`Chart${id}`).getContext('2d');
   const myChart = new Chart(ctx, {
@@ -40,6 +47,11 @@ const initBar = ({ id, name, type, query, fields }) => {
 };
 
 const initDonut = ({ id, name, query, fields }) => {
+  // If the query is a query database, you need to format it
+  if (typeof query === 'object') {
+    query = formatData(query);
+  }
+
   const backgroundColor = query.map(() => getColor());
   const ctx = document.getElementById(`Chart${id}`).getContext('2d');
   const myChart = new Chart(ctx, {
@@ -89,6 +101,11 @@ const initDonut = ({ id, name, query, fields }) => {
 };
 
 const initArea = ({ id, name, query, fields }) => {
+  // If the query is a query database, you need to format it
+  if (typeof query === 'object') {
+    query = formatData(query);
+  }
+
   const ctx = document.getElementById(`Chart${id}`).getContext('2d');
   const myChart = new Chart(ctx, {
     type: 'line',
@@ -126,7 +143,7 @@ const initArea = ({ id, name, query, fields }) => {
         xAxes: [{
           ticks: {
             autoSkip: false,
-            maxRotation: 0,
+            maxRotation: 180,
           },
         }]
       },
@@ -136,22 +153,20 @@ const initArea = ({ id, name, query, fields }) => {
 
 const initCharts = () => {
   chartData.forEach(item => {
-    if (item.source !== 'db') {
-      switch (item.type) {
-        case 'horizontalBar':
-        case 'bar':
-          initBar(item);
-          break;
-        case 'doughnut':
-          initDonut(item);
-          break;
-        case 'line':
-          initArea(item);
-          break;
+    switch (item.type) {
+      case 'horizontalBar':
+      case 'bar':
+        initBar(item);
+        break;
+      case 'doughnut':
+        initDonut(item);
+        break;
+      case 'line':
+        initArea(item);
+        break;
 
-        default:
-          console.log('Unsupported');
-      }
+      default:
+        console.log('Unsupported');
     }
   });
 };
