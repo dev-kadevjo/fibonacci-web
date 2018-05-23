@@ -26,7 +26,7 @@ Route::group(['as' => 'fibonacci.'], function ()use ($namespacePrefix)
         // do nothing, might just be because table not yet migrated.
     }
 
-    Route::post('/login-social',$namespacePrefix.'AuthAPIController@socialAuth');
+    Route::post('/login-provider',$namespacePrefix.'AuthAPIController@socialAuth');
 });
 
 Route::post('/getPublicToken',$namespacePrefix.'APIController@getToken');

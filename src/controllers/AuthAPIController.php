@@ -21,8 +21,8 @@ class AuthAPIController extends BaseController
     {
         $validator = Validator::make($request->json()->all(), [
             'provider' => 'required',
-            'socialID'  => 'required',
-            'token' => 'required'
+            'identifier'  => 'required',
+            'verifier' => 'required'
         ]);
 
         if( $validator->fails() ) {
@@ -30,8 +30,8 @@ class AuthAPIController extends BaseController
         }
 
         $provider = $request->json('provider');
-        $socialID = $request->json('socialID');
-        $token = $request->json('token');
+        $socialID = $request->json('identifier');
+        $token = $request->json('verifier');
 
         $account =  Fibonacci::authenticateSocial($provider, $socialID, $token);
         
