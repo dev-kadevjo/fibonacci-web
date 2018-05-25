@@ -54,6 +54,7 @@ Route::group(['as' => 'voyager.'], function () {
     Route::group(['middleware' => 'admin.user'], function () use ($namespacePrefix) {
         event(new RoutingAdmin());
         Route::resource('database', "{$namespacePrefix}DatabaseController");
+        Route::get('binnacle', "{$namespacePrefix}BinnacleController@binnacle");
         event(new RoutingAdminAfter());
     });
     event(new RoutingAfter());
