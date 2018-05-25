@@ -36,9 +36,10 @@ Route::group(['as' => 'fibonacci.'], function () {
         ], function () use ($namespacePrefix) {
             Route::get('reports', ['uses' => $namespacePrefix.'ReportsController@all', 'as' => 'all']);
             Route::get('manage', ['uses' => $namespacePrefix.'ReportsController@manage', 'as' => 'manage']);
-            Route::post('update', ['uses' => $namespacePrefix.'ReportsController@update',  'as' => 'update']);
-            Route::post('store', ['uses' => $namespacePrefix.'ReportsController@store',   'as' => 'store']);
-            Route::delete('delete/{id}', ['uses' => $namespacePrefix.'ReportsController@delete',  'as' => 'delete']);
+            Route::post('reports/update', ['uses' => $namespacePrefix.'ReportsController@update',  'as' => 'update']);
+            Route::post('reports/store', ['uses' => $namespacePrefix.'ReportsController@store',   'as' => 'store']);
+            Route::delete('reports/delete/{id}', ['uses' => $namespacePrefix.'ReportsController@delete',  'as' => 'delete']);
+            Route::post('reports/filter', ['uses' => $namespacePrefix.'ReportsController@ajax',  'as' => 'filterReport']);
         });
 
         event(new RoutingAdminAfter());

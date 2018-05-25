@@ -35,92 +35,93 @@ class ReportsController extends BaseVoyagerController{
   }
 
   public function store(Request $request) {
-      //Voyager::canOrFail('browse_reports');        
-      try {
-        $newRow = new Report;
-        $newRow->name = $request->name;
-        $newRow->type = $request->type;
-        $newRow->source = $request->source;
-        $newRow->fields = $request->fields;
-        $newRow->query = $request->query_explorer;
+    //Voyager::canOrFail('browse_reports');        
+    try {
+      $newRow = new Report;
+      $newRow->name = $request->name;
+      $newRow->type = $request->type;
+      $newRow->source = $request->source;
+      $newRow->fields = $request->fields;
+      $newRow->query = $request->query_explorer;
 
-        $data = $newRow->save()
-          ? $this->alertSuccess(__('fibonacci.reports.success_created'))
-          : $this->alertError(__('fibonacci.reports.error_creating'));
-        
-        return redirect(config('voyager.prefix').'/reports/manage')->with($data);
-      } catch (Exception $e) {
-        return redirect(config('voyager.prefix').'/reports/manage')->with($this->alertException($e, 'Saving Failed'));
-      }
-    }  
-
-    public function update(Request $request) {
-      //Voyager::canOrFail('browse_reports');
-      try {            
-        $targetRow = Report::findOrFail( $request->v_id );
-        $targetRow->name = $request->v_name;
-        $targetRow->type = $request->v_type;
-        $targetRow->source = $request->v_source;
-        $targetRow->fields = $request->v_fields;
-        $targetRow->query = $request->v_query;
-
-        $data = $targetRow->save()
-          ? $this->alertSuccess(__('fibonacci.reports.success_update', ['datatype' => 'table_name']))
-          : $this->alertError(__('fibonacci.reports.error_updating'));
-        
-        return redirect(config('voyager.prefix').'/reports/manage')->with($data);
-      } catch (Exception $e) {
-        return back()->with($this->alertException($e, __('voyager.generic.update_failed')));
-      }
-    }
-
-    public function delete($id) {
-      //Voyager::canOrFail('browse_reports');
-      // Remove Report
-      $delete = Report::findOrFail( $id );
+      $data = $newRow->save()
+        ? $this->alertSuccess(__('fibonacci.reports.success_created'))
+        : $this->alertError(__('fibonacci.reports.error_creating'));
       
-      $data = $delete->delete()
-        ? $this->alertSuccess(__('fibonacci.reports.success_remove'))
-        : $this->alertError(__('fibonacci.reports.error_removing'));
+      return redirect(config('voyager.prefix').'/manage')->with($data);
+    } catch (Exception $e) {
+      return redirect(config('voyager.prefix').'/manage')->with($this->alertException($e, 'Saving Failed'));
+    }
+  }  
+
+  public function update(Request $request) {
+    //Voyager::canOrFail('browse_reports');
+    try {            
+      $targetRow = Report::findOrFail( $request->v_id );
+      $targetRow->name = $request->v_name;
+      $targetRow->type = $request->v_type;
+      $targetRow->source = $request->v_source;
+      $targetRow->fields = $request->v_fields;
+      $targetRow->query = $request->v_query;
+
+      $data = $targetRow->save()
+        ? $this->alertSuccess(__('fibonacci.reports.success_update', ['datatype' => 'table_name']))
+        : $this->alertError(__('fibonacci.reports.error_updating'));
       
-      return redirect(config('voyager.prefix').'/reports/manage')->with($data);
+      return redirect(config('voyager.prefix').'/manage')->with($data);
+    } catch (Exception $e) {
+      return back()->with($this->alertException($e, __('voyager.generic.update_failed')));
+    }
+  }
+
+  public function delete($id) {
+    //Voyager::canOrFail('browse_reports');
+    // Remove Report
+    $delete = Report::findOrFail( $id );
+    
+    $data = $delete->delete()
+      ? $this->alertSuccess(__('fibonacci.reports.success_remove'))
+      : $this->alertError(__('fibonacci.reports.error_removing'));
+    
+    return redirect(config('voyager.prefix').'/manage')->with($data);
+  }
+
+  public function getData($query,$Sdate=null,$Edate=null){
+    $url = Url::fromString($query);
+    $result = explode('&', $url->getQuery());       
+    foreach ($result as $value) {
+        $tmp = explode('=', $value);
+        $others[ $tmp[0] ] = $tmp[1];
+    }                
+    $startDate = ($Sdate) ? new Carbon($Sdate) : new Carbon($others['start-date']);
+    $endDate = ($Edate) ? new Carbon($Edate) : new Carbon($others['end-date']);
+    $period = Period::create($startDate, $endDate);
+    $metrics = $others['metrics'];
+
+    // Removing unnecessary data
+    unset($others['ids']);
+    unset($others['start-date']);
+    unset($others['end-date']);
+    unset($others['metrics']);
+
+    $analyticsData = Analytics::performQuery($period,$metrics,$others);
+
+    return $analyticsData->rows;
+  }
+
+  public function ajax(Request $request){    
+    $id = $request->uuid;
+    $range = explode(' - ', $request->range);
+    $sdate = $range[0];
+    $edate = $range[1];
+    $data = Report::find($id);
+
+    if($data->source !== 'analytics'){ // only available for analytics
+      return 0;
     }
 
-    public function getData($query,$Sdate=null,$Edate=null){
-      $url = Url::fromString($query);
-      $result = explode('&', $url->getQuery());       
-      foreach ($result as $value) {
-          $tmp = explode('=', $value);
-          $others[ $tmp[0] ] = $tmp[1];
-      }                
-      $startDate = ($Sdate) ? new Carbon($Sdate) : new Carbon($others['start-date']);
-      $endDate = ($Edate) ? new Carbon($Edate) : new Carbon($others['end-date']);
-      $period = Period::create($startDate, $endDate);
-      $metrics = $others['metrics'];
+    $data->query = $this->getData($data->query,$sdate,$edate);
+    return json_encode( $data );
+  }
 
-      // Removing unnecessary data
-      unset($others['ids']);
-      unset($others['start-date']);
-      unset($others['end-date']);
-      unset($others['metrics']);
-
-      $analyticsData = Analytics::performQuery($period,$metrics,$others);
-
-      return $analyticsData->rows;
-    }
-
-    public function ajax(Request $request){
-      $id = $request->uuid;
-      $sdate = $request->sdate;
-      $edate = $request->edate;
-      $data = Report::find($id);
-
-      $response = array(
-        "id" => $id,
-        "type" => $data->type,
-        "data" => $this->getData($data->query,$sdate,$edate)
-      );
-
-      return json_encode($response);
-    }
 }

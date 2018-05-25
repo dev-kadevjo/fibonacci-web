@@ -1,3 +1,4 @@
+import axios from 'axios';
 import _ from 'lodash/object';
 import randomColor from 'random-color';
 import roundTo from 'round-to';
@@ -151,24 +152,70 @@ const initArea = ({ id, name, query, fields }) => {
   });
 };
 
-const initCharts = () => {
-  chartData.forEach(item => {
-    switch (item.type) {
-      case 'horizontalBar':
-      case 'bar':
-        initBar(item);
-        break;
-      case 'doughnut':
-        initDonut(item);
-        break;
-      case 'line':
-        initArea(item);
-        break;
-
-      default:
-        console.log('Unsupported');
+const dateRange = (id) => {
+  $(`input[name="${id}"]`).daterangepicker({
+    showDropdowns: true,
+    opens: 'center',
+    locale: {
+      format: 'YYYY-MM-DD',
     }
+  }, function (start, end, label) {
+    console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
   });
+};
+
+const filterChart = (event) => {
+  event.preventDefault();
+  const form = event.target;
+  const spin = form.querySelector('.spin-loader');
+  const button = form.querySelector('button');
+  const range = form.querySelector('.input-range').value;
+  const uuid = form.getAttribute('uuid');
+
+  button.disabled = true;
+  spin.classList.remove('hidden');
+
+  axios.post('/admin/reports/filter', {
+    uuid,
+    range,
+  })
+    .then(response => {
+      if (response.data) { drawCharts(response.data); }
+    })
+    .catch(error => console.log(error))
+    .then(() => {
+      button.disabled = false;
+      spin.classList.add('hidden');
+    });
+
+};
+
+const drawCharts = data => {
+  switch (data.type) {
+    case 'horizontalBar':
+    case 'bar':
+      initBar(data);
+      break;
+    case 'doughnut':
+      initDonut(data);
+      break;
+    case 'line':
+      initArea(data);
+      break;
+
+    default:
+      console.log('Unsupported');
+  }
+};
+
+const initCharts = () => {
+  const chartsFilters = document.querySelectorAll('.filter-chart');
+  chartsFilters.forEach(item => {
+    dateRange(item.querySelector('.input-range').name);
+    item.addEventListener('submit', filterChart);
+  });
+
+  chartData.forEach(item => drawCharts(item));
 };
 
 initCharts();

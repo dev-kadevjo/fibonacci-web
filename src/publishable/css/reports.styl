@@ -72,3 +72,34 @@ textBlue 	= #1565c0
 			&:nth-child(1)
 				font-size 1.1em
 				font-weight 400 
+
+.lds-dual-ring
+	display inline-block
+	height 35px
+	margin-left 10px
+	vertical-align middle
+	width 35px
+
+.lds-dual-ring:after
+	content " "
+	display block
+	width 30px
+	height 30px
+	margin 1px
+	border-radius 50%
+	border 3px solid #333333
+	border-color #333333 transparent #333333 transparent
+	animation lds-dual-ring 1.2s linear infinite
+
+.filter-chart
+	margin 0 auto
+	max-width 340px	
+
+@keyframes lds-dual-ring {
+	0% {
+		transform rotate(0deg)
+	}
+	100% {
+		transform rotate(360deg)
+	}
+}
