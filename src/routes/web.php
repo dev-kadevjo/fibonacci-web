@@ -33,10 +33,8 @@ Route::group(['as' => 'fibonacci.'], function () {
         });
 
         Route::group([
-            'as' => 'reports',
-            'prefix' => 'reports',
         ], function () use ($namespacePrefix) {
-            Route::get('view', ['uses' => $namespacePrefix.'ReportsController@all', 'as' => 'all']);
+            Route::get('reports', ['uses' => $namespacePrefix.'ReportsController@all', 'as' => 'all']);
             Route::get('manage', ['uses' => $namespacePrefix.'ReportsController@manage', 'as' => 'manage']);
             Route::post('update', ['uses' => $namespacePrefix.'ReportsController@update',  'as' => 'update']);
             Route::post('store', ['uses' => $namespacePrefix.'ReportsController@store',   'as' => 'store']);

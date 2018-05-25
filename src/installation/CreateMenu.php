@@ -26,10 +26,10 @@ class CreateMenu{
     }
   }
 
-  private static function subItem($menuItem, $sub){    
-    $subId = static::saveItem($menuItem, '', null, $menuItem);
+  private static function subItem($menuItem, $sub){
+    $subId = static::saveItem($menuItem, '', null);
     foreach ($sub as $key => $value) {
-      static::saveItem($key, $value, $subId);      
+      static::saveItem($key, $value, $subId, $key);
     }
   }
 
