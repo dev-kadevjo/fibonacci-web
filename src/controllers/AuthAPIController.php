@@ -31,7 +31,7 @@ class AuthAPIController extends BaseController
 
         $provider = $request->json('provider');
         $socialID = $request->json('identifier');
-        $token = $request->json('verifier');
+        $token = json_decode($request->json('verifier'),true);
 
         $account =  Fibonacci::authenticateSocial($provider, $socialID, $token);
         
