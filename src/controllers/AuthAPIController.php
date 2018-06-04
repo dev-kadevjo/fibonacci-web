@@ -48,7 +48,7 @@ class AuthAPIController extends BaseController
 
         $token = $user->createToken(config('fibonacci.auth-social.passport.token'));
 
-        return response()->json(['accessToken'=>$token->accessToken]);
+        return response()->json(['user'=>$user,'token'=>$token->accessToken]);
 
     }
 }
