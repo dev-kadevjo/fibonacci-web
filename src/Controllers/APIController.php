@@ -49,27 +49,27 @@ class APIController extends BaseVoyagerController
             $this->middleware('auth:api')->only( $this->makeSecure($slug) );
         }
     }
-    
+
     // Browse
     public function index(Request $request){
-        
+
         $slug = $this->getSlug($request);
 
         if( !$this->checkAPI($slug,'browse') ) return  response()->json(array('error'=>'Action not allowed') );
-        
+
         $modelClass = $this->getModel($slug);
-        
+
         if($request->has('filter'))
         {
             $filters = json_decode($request->input('filter'));
-            
+
             $query = $modelClass::query();
 
             foreach ($filters as $filter)
             {
                 call_user_func_array( array($query, $filter->method), $filter->parameters );
             }
-            
+
             $response = $query->get();
         }
         else
@@ -84,14 +84,14 @@ class APIController extends BaseVoyagerController
     public function show(Request $request, $id){
         $slug = $this->getSlug($request);
         if( !$this->checkAPI($slug,'read') ) return response()->json( array('error'=>'Action not allowed') );
-        
+
         $modelClass = $this->getModel($slug);
         $model = $modelClass::find($id);
-        return $model??response()->json(array('error'=>'WHOOPS! Nothing here, please try again'));  
+        return $model??response()->json(array('error'=>'WHOOPS! Nothing here, please try again'));
     }
 
     // Udate
-    public function update(Request $request, $id){ 
+    public function update(Request $request, $id){
         $slug = $this->getSlug($request); // table name
         if( !$this->checkAPI($slug,'edit') ) return response()->json( array('error'=>'Action not allowed') );
 
@@ -104,27 +104,27 @@ class APIController extends BaseVoyagerController
             if( $request->hasFile($key) ){
                 $requestData[$key] = $this->upload($key, $value, $slug);
                 // Delete old image in storage
-                $oldImage = $update->where('id', $id)->first();                
+                $oldImage = $update->where('id', $id)->first();
                 if (Storage::disk(config('voyager.storage.disk'))->exists($oldImage->{$key})) {
                     Storage::disk(config('voyager.storage.disk'))->delete($oldImage->{$key});
                 }
             }
         }
-        
+
         $restrict = config('voyager.restrict');
         foreach ($requestData as $key => $value) {
             if($restrict && in_array($key, $restrict))
                 unset($requestData[$key]);
         }
-        
+
         if( $update->forceFill($requestData)->save() ){
             return response()->json( array('state'=>'success') );
         }else{
             return response()->json( array('state'=>'error') );
-        }               
+        }
     }
-    
-    // Insert    
+
+    // Insert
     public function store(Request $request){
         $slug = $this->getSlug($request);
         if( !$this->checkAPI($slug,'add') ) return response()->json( array('error'=>'Action not allowed') );
@@ -136,8 +136,8 @@ class APIController extends BaseVoyagerController
         // Check for images to upload
         foreach ($requestData as $key => $value) {
             if( $request->hasFile($key) ){
-                $requestData[$key] = $this->upload($key, $value, $slug); 
-            }            
+                $requestData[$key] = $this->upload($key, $value, $slug);
+            }
         }
 
         $restrict = config('voyager.restrict');
@@ -149,12 +149,12 @@ class APIController extends BaseVoyagerController
             return response()->json( array('state'=>'success') );
         }else{
             return response()->json( array('state'=>'error') );
-        }           
+        }
     }
 
     private function upload($name,$image,$slug){
         $file = $image;
-        $dataType = DataType::where('name','=',$slug)->first();        
+        $dataType = DataType::where('name','=',$slug)->first();
         $folder = $dataType ? $dataType->slug : $slug;
         $path = $folder.'/'.date('FY').'/';
 
@@ -163,8 +163,8 @@ class APIController extends BaseVoyagerController
         while (Storage::disk(config('voyager.storage.disk'))->exists($path.$filename.'.'.$file->getClientOriginalExtension())) {
             $filename = Str::random(20);
         }
-        $fullPath = $path.$filename.'.'.$file->getClientOriginalExtension();       
-  
+        $fullPath = $path.$filename.'.'.$file->getClientOriginalExtension();
+
         $resize_width = 1800;
         $resize_height = null;
         $image = Image::make($file)->resize(
@@ -182,9 +182,9 @@ class APIController extends BaseVoyagerController
 
     // Delete
     public function destroy(Request $request, $id){
-        $slug = $this->getSlug($request);        
+        $slug = $this->getSlug($request);
         if( !$this->checkAPI($slug,'delete') ) return response()->json( array('error'=>'Action not allowed') );
-        
+
         $modelClass = $this->getModel($slug);
         $remove = $modelClass::find($id);
 
@@ -192,7 +192,7 @@ class APIController extends BaseVoyagerController
             return response()->json( array('state'=>'success') );
         }else{
             return response()->json( array('state'=>'error') );
-        } 
+        }
     }
 
 
@@ -214,13 +214,13 @@ class APIController extends BaseVoyagerController
         if(!$api) return false;
 
         $options = json_decode($api->config);
-        return $options->{$action}->enable;        
+        return $options->{$action}->enable;
     }
     // Create array to auth:api
     private function makeSecure($table){
         $secure = array();
         $api = ApiConfig::where('table_name','=',$table)->first();
-        if($api){            
+        if($api){
             $options = json_decode($api->config);
 
             if( $options->browse->secure ) array_push($secure, 'index');
@@ -228,7 +228,7 @@ class APIController extends BaseVoyagerController
             if( $options->edit->secure ) array_push($secure, 'update');
             if( $options->add->secure ) array_push($secure, 'store');
             if( $options->delete->secure ) array_push($secure, 'destroy');
-        } 
+        }
         return $secure;
     }
 
@@ -295,6 +295,5 @@ class APIController extends BaseVoyagerController
         if ($rows->count() > 0) {
             event(new BreadImagesDeleted($data, $rows));
         }
-    }   
-
+    }
 }

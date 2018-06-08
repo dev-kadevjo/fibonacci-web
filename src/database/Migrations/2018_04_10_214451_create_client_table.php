@@ -20,6 +20,7 @@ class CreateClientTable extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('password')->nullable();
+            $table->string('remember_token')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

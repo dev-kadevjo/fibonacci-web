@@ -31,8 +31,11 @@ class FibonacciServiceProvider extends ServiceProvider
             $this->registerPublishables();
             $this->registerConsoleCommands();
         }
+
+        \Config::set('auth.guards.api',     ['driver'   => 'jwt','provider' => 'clients']);
+        \Config::set('auth.providers.clients',  ['driver'   => 'eloquent','model'   => \Kadevjo\Fibonacci\Models\Client::class]);
     }
-    
+
     public function provides() {
         return ['fibonacci'];
     }
@@ -41,9 +44,9 @@ class FibonacciServiceProvider extends ServiceProvider
     {
         $this->commands(Commands\InstallCommand::class);
     }
-    
+
     private function registerPublishables(){
-        $publishablePath = dirname(__DIR__).'/src/publishable';    
+        $publishablePath = dirname(__DIR__).'/src/publishable';
         $publishable = [
             'reports_assets' => [
                 "{$publishablePath}/css/reports.css" => public_path('css/reports.css'),
@@ -53,7 +56,7 @@ class FibonacciServiceProvider extends ServiceProvider
             "{$publishablePath}/config/fibonacci.php" => config_path('fibonacci.php'),
             ],
             'lang' => [
-            "{$publishablePath}/lang/" => base_path('resources/lang/'),          
+            "{$publishablePath}/lang/" => base_path('resources/lang/'),
             ],
         ];
         foreach ($publishable as $group => $paths) {
