@@ -48,8 +48,7 @@ class DatabaseController extends VoyagerDatabaseController
         foreach ($tables as $value) {
             $value->api = ApiConfig::where('table_name', '=', $value->name)->count();
         }
-
-        return view('fibonacci::enhances.database.index')->with(compact('dataTypes', 'tables'));
+        return view('fibonacci::enhances.bread.browse')->with(compact('dataTypes', 'tables'));
     }
 
     /**
@@ -81,9 +80,9 @@ class DatabaseController extends VoyagerDatabaseController
             Type::registerCustomPlatformTypes();
 
             $table = Table::make($request->table);
-            SchemaManager::createTable($table);            
+            SchemaManager::createTable($table);
 
-            if (isset($request->create_model) && ($request->create_model == 'on')) { 
+            if (isset($request->create_model) && ($request->create_model == 'on')) {
                 $modelNamespace = config('voyager.models.namespace', app()->getNamespace());
                 $params = [
                     'name' => $modelNamespace.Str::studly(Str::singular($table->name)),
@@ -113,7 +112,7 @@ class DatabaseController extends VoyagerDatabaseController
                     '--table' => $table->name,
                 ]);
             }
-            
+
 
             return redirect()
                ->route('voyager.database.index')
@@ -375,7 +374,7 @@ class DatabaseController extends VoyagerDatabaseController
         Voyager::canOrFail('browse_database');
 
         /* @var \TCG\Voyager\Models\DataType $dataType */
-        $dataType = Voyager::model('DataType')->find($id);        
+        $dataType = Voyager::model('DataType')->find($id);
 
         // Delete Translations, if present
         if (is_bread_translatable($dataType)) {
@@ -499,17 +498,17 @@ class DatabaseController extends VoyagerDatabaseController
     }
 
      public function editModelRW($name , $on){
-        $fname = base_path("app/".$name.".php");   
+        $fname = base_path("app/".$name.".php");
          $fileData = new Filesystem();
         if (!$fileData->exists($fname)) {
-           $fname = base_path("app\\".$name.".php");  
-        }   
+           $fname = base_path("app\\".$name.".php");
+        }
         $fhandle = fopen($fname,"r");
         $content = fread($fhandle,filesize($fname));
 
         if (strchr($content,"use Kadevjo\Fibonacci\Traits\Loggable;",true) === false) {
             $content = str_replace("use Illuminate\Database\Eloquent\Model;", "use Illuminate\Database\Eloquent\Model;\nuse Kadevjo\Fibonacci\Traits\Loggable; ", $content);
-        }    
+        }
         if($on =="on"){
             $active = 'use Loggable;';
         }else{

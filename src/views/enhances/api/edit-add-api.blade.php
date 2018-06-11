@@ -6,7 +6,7 @@
     <div class="page-title">
         <i class="voyager-data"></i>
         {{ __('fibonacci.database.edit_api_for_table', ['table' => $table]) }}
-    </div>    
+    </div>
     @include('voyager::multilingual.language-selector')
 @stop
 
@@ -19,9 +19,9 @@
                 <form action="@if (!isset($dataRow)){{ route('fibonacci.database.api.store', $table) }}@else{{ route('fibonacci.database.api.update', $dataRow->id) }}@endif"
                       method="POST" role="form">
                     <input type="hidden" value="{{ $table }}" name="table_name">
-                    
-                    @if(isset($dataRow))                        
-                        {{ method_field("PUT") }}                    
+
+                    @if(isset($dataRow))
+                        {{ method_field("PUT") }}
                     @endif
                     <!-- CSRF TOKEN -->
                     {{ csrf_field() }}
@@ -36,24 +36,24 @@
 
                         <div class="panel-body">
                             <div class="row fake-table-hd">
-                                <div class="col-xs-4">{{ __('fibonacci.database.visibility') }}</div>                                
+                                <div class="col-xs-4">{{ __('fibonacci.database.visibility') }}</div>
                                 <div class="col-xs-4">{{ __('fibonacci.database.api_enable') }}</div>
-                                <div class="col-xs-4">{{ __('fibonacci.database.api_secure') }}</div>                                
+                                <div class="col-xs-4">{{ __('fibonacci.database.api_secure') }}</div>
                             </div>
 
                             <div id="bread-items">
-                                
+
                                 @if (isset($dataRow))
                                     @foreach (json_decode($dataRow->config) as $key => $value)
-                                    <div class="row row-dd">                                                                        
+                                    <div class="row row-dd">
 
                                         <div class="col-xs-4">
-                                            <h4><strong>{{ ucfirst($key) }}</strong></h4>                                        
+                                            <h4><strong>{{ ucfirst($key) }}</strong></h4>
                                         </div>
                                         <div class="col-xs-4">
                                             <input type="checkbox"
                                                    id="allow_{{ $key }}"
-                                                   name="allow_{{ $key }}" @if($value->enable){{ 'checked="checked"' }}@endif>                                        
+                                                   name="allow_{{ $key }}" @if($value->enable){{ 'checked="checked"' }}@endif>
                                         </div>
                                         <div class="col-xs-4">
                                             <input type="checkbox"
@@ -68,7 +68,7 @@
                                             <div class="col-xs-4"><h4><strong>{{ ucfirst($key) }}</strong></h4></div>
                                             <div class="col-xs-4"><input type="checkbox" id="allow_{{ $key }}" name="allow_{{ $key }}"></div>
                                             <div class="col-xs-4"><input type="checkbox" id="secure_{{ $key }}" name="secure_{{ $key }}"></div>
-                                        </div>                                        
+                                        </div>
                                     @endforeach
                                 @endif
 
@@ -110,115 +110,115 @@
                                 <select class="btn btn-primary" id = "timeSelect">
                                     <option value="Before">Before</option>
                                     <option value="After">After</option>
-                                </select>                                
+                                </select>
                                <!-- <label class="label label-default">Action:</label> -->
                                 <select class="btn btn-info" id="actioSelect" >
                                     <option value="Create">Create</option>
                                     <option value="Update">Update</option>
                                     <option value="Delete">Delete</option>
                                     <option value="Restore">Restore</option>
-                                </select>                               
-                                
+                                </select>
+
                                 <button type="button" class="btn btn-primary" id ="actionButtomadd">Add Action</button>
                                 </div>
-                               
+
                             </div>
-                            
-                            <div class="col-xs-12 grpActive" id="AfterCreate"   {{ empty($dataRow->creating_o)!=false?' style=display:none':' style=display:block' }}>  
+
+                            <div class="col-xs-12 grpActive" id="AfterCreate"   {{ empty($dataRow->creating_o)!=false?' style=display:none':' style=display:block' }}>
                                 <div class="form-group">
                                 <br>
-                                 <h4>Before Create</h4>    
-                                </div>                         
+                                 <h4>Before Create</h4>
+                                </div>
                                 <textarea class="custom_code form-control" name="creating_o" id="creating_o" rows="15">
                                     @if (isset($dataRow))
                                         {{ trim($dataRow->creating_o) }}
                                     @endif
                                 </textarea>
                             </div>
-                            <div class="col-xs-12 grpActive" id="BeforeCreate" {{ empty($dataRow->created_o)!=false?' style=display:none':' style=display:block' }}>  
+                            <div class="col-xs-12 grpActive" id="BeforeCreate" {{ empty($dataRow->created_o)!=false?' style=display:none':' style=display:block' }}>
                                 <div class="form-group">
                                 <br>
-                                 <h4>After Create</h4>    
-                                </div>                         
+                                 <h4>After Create</h4>
+                                </div>
                                 <textarea class="custom_code form-control" name="created_o" id="created_o" rows="15">
                                     @if (isset($dataRow))
                                         {{ trim($dataRow->created_o) }}
                                     @endif
                                 </textarea>
                             </div>
-                            <div class="col-xs-12 grpActive" id = "AfterUpdate"  {{ empty($dataRow->updating_o)!=false?' style=display:none':' style=display:block' }}>  
+                            <div class="col-xs-12 grpActive" id = "AfterUpdate"  {{ empty($dataRow->updating_o)!=false?' style=display:none':' style=display:block' }}>
                                 <div class="form-group">
                                 <br>
-                                 <h4>Before Update</h4>    
-                                </div>                         
+                                 <h4>Before Update</h4>
+                                </div>
                                 <textarea class="custom_code form-control" name="updating_o" id="updating_o" rows="15">
                                     @if (isset($dataRow))
                                         {{ trim($dataRow->updating_o) }}
                                     @endif
                                 </textarea>
                             </div>
-                            <div class="col-xs-12 grpActive" id= "BeforeUpdate" {{ empty($dataRow->updated_o)!=false?' style=display:none':' style=display:block' }}>  
+                            <div class="col-xs-12 grpActive" id= "BeforeUpdate" {{ empty($dataRow->updated_o)!=false?' style=display:none':' style=display:block' }}>
                                 <div class="form-group">
                                 <br>
-                                 <h4>After Update</h4>    
-                                </div>                         
+                                 <h4>After Update</h4>
+                                </div>
                                 <textarea class="custom_code form-control" name="updated_o" id="updated_o" rows="15">
                                     @if (isset($dataRow))
                                         {{ trim($dataRow->updated_o) }}
                                     @endif
                                 </textarea>
                             </div>
-                            <div class="col-xs-12 grpActive" id="AfterDelete" {{ empty($dataRow->deleting_o)!=false?' style=display:none':' style=display:block' }}>  
+                            <div class="col-xs-12 grpActive" id="AfterDelete" {{ empty($dataRow->deleting_o)!=false?' style=display:none':' style=display:block' }}>
                                 <div class="form-group">
                                 <br>
-                                 <h4>Before Delete</h4>    
-                                </div>                         
+                                 <h4>Before Delete</h4>
+                                </div>
                                 <textarea class="custom_code form-control" name="deleting_o" id="deleting_o" rows="15">
                                     @if (isset($dataRow))
                                         {{ trim($dataRow->deleting_o) }}
                                     @endif
                                 </textarea>
                             </div>
-                            <div class="col-xs-12 grpActive" id = "BeforeDelete"  {{ empty($dataRow->deleted_o)!=false?' style=display:none':' style=display:block' }}>  
+                            <div class="col-xs-12 grpActive" id = "BeforeDelete"  {{ empty($dataRow->deleted_o)!=false?' style=display:none':' style=display:block' }}>
                                 <div class="form-group">
                                 <br>
-                                 <h4>After Delete</h4>    
-                                </div>                         
+                                 <h4>After Delete</h4>
+                                </div>
                                 <textarea class="custom_code form-control" name="deleted_o" id="deleted_o" rows="15">
                                     @if (isset($dataRow))
                                         {{ trim($dataRow->deleted_o) }}
                                     @endif
                                 </textarea>
                             </div>
-                            <div class="col-xs-12 grpActive" id = "AfterRestore"  {{ empty($dataRow->restoring_o)!=false?' style=display:none':' style=display:block' }}>  
+                            <div class="col-xs-12 grpActive" id = "AfterRestore"  {{ empty($dataRow->restoring_o)!=false?' style=display:none':' style=display:block' }}>
                                 <div class="form-group">
                                 <br>
-                                 <h4>Before Restore</h4>    
-                                </div>                         
+                                 <h4>Before Restore</h4>
+                                </div>
                                 <textarea class="custom_code form-control" name="restoring_o" id="restoring_o" rows="15">
                                     @if (isset($dataRow))
                                         {{ trim($dataRow->restoring_o) }}
                                     @endif
                                 </textarea>
                             </div>
-                            <div class="col-xs-12 grpActive" id = "BeforeRestore" {{ empty($dataRow->restored_o)!=false? ' style=display:none ':' style=display:block ' }} >  
+                            <div class="col-xs-12 grpActive" id = "BeforeRestore" {{ empty($dataRow->restored_o)!=false? ' style=display:none ':' style=display:block ' }} >
                                 <div class="form-group">
                                 <br>
-                                 <h4>After Restore</h4>    
-                                </div>                         
+                                 <h4>After Restore</h4>
+                                </div>
                                 <textarea class="custom_code form-control" name="restored_o" id="restored_o" rows="15">
                                     @if (isset($dataRow))
                                         {{ trim($dataRow->restored_o) }}
                                     @endif
                                 </textarea>
                             </div>
-                            
-                            
+
+
                         </div><!-- .panel-body -->
                     </div><!-- .panel -->
 
 
-                    <button type="submit" class="btn pull-right btn-primary">{{ __('voyager.generic.submit') }}</button>
+                    <button type="submit" class="btn pull-right btn-primary">Submit</button>
 
                 </form>
             </div><!-- .col-md-12 -->
@@ -235,7 +235,7 @@
         window.invalidEditors = [];
         var validationAlerts = $('.validation-error');
         validationAlerts.hide();
-        $(function () {            
+        $(function () {
             /**
              * Reorder items
              */
@@ -442,11 +442,11 @@
     </script>
      <script>
       $(document).ready(function(){
-            $('#actionButtomadd').click(function(){  
+            $('#actionButtomadd').click(function(){
                 var tim = $( "#timeSelect" ).val();
                 var acti = $( "#actioSelect" ).val();
                 $('#'+tim+acti) .attr("style", "display:block");
-            });      
+            });
         });
     </script>
 @stop

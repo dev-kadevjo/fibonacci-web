@@ -205,7 +205,7 @@
 
         $(function () {
 
-            $('.bread_actions').on('click', '.delete', function (e) {                
+            $('.bread_actions').on('click', '.delete', function (e) {
                 id = $(this).data('id');
                 name = $(this).data('name');
                 urlBREAD = '{{ route('voyager.database.bread.delete', ['id' => null]) }}';
