@@ -54,7 +54,7 @@ Route::group(['as' => 'voyager.'], function () {
     $namespacePrefix='\\Kadevjo\\Fibonacci\\Controllers\\';
     Route::group(['middleware' => 'admin.user'], function () use ($namespacePrefix) {
         event(new RoutingAdmin());
-        Route::resource('bread', "{$namespacePrefix}BreadController");
+        //Route::resource('bread', "{$namespacePrefix}BreadController");
         Route::get('binnacle', "{$namespacePrefix}BinnacleController@binnacle");
         event(new RoutingAdminAfter());
     });
