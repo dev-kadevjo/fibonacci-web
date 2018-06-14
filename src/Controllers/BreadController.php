@@ -55,6 +55,7 @@ class BreadController extends VoyagerBreadController
      */
     public function create(Request $request, $table)
     {
+
         Voyager::canOrFail('browse_bread');
 
         $data = $this->prepopulateBreadInfo($table);

@@ -7,6 +7,8 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Kadevjo\Fibonacci\Traits\HasImageTrait;
+use Kadevjo\Fibonacci\Models\NotificationDevice;
+
 
 class Client extends Authenticatable implements JWTSubject
 {
@@ -14,6 +16,11 @@ class Client extends Authenticatable implements JWTSubject
 
     protected $table="client";
     protected $images = ["avatar"];
+
+    public function __construct()
+    {
+        $this->channels = [];
+    }
 
     public function getJWTIdentifier()
     {
@@ -28,6 +35,36 @@ class Client extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany('Kadevjo\Fibonacci\Models\Notification');
+    }
+
+    public function devices()
+    {
+        return $this->hasMany('Kadevjo\Fibonacci\Models\NotificationDevice');
+    }
+
+    public function routeNotificationForOneSignal()
+    {
+        return \Kadevjo\Fibonacci\Models\NotificationDevice::where('user_id',$this->id)->where('provider','onesignal')->get()->pluck('device_id');
+    }
+
+    public function routeNotificationForAppCenter($device)
+    {
+        return \Kadevjo\Fibonacci\Models\NotificationDevice::where('user_id',$this->id)->where('provider','appcenter')->where('type',$device)->get()->pluck('device_id');
+    }
+
+    public function addDevice($provider,$type,$device_id)
+    {
+        $device =  new \Kadevjo\Fibonacci\Models\NotificationDevice();
+        $device->provider = $provider;
+        $device->type = $type;
+        $device->device_id = $device_id;
+        $device->client_id = $this->id;
+        $device->save();
     }
 
 }

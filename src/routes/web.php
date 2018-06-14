@@ -40,6 +40,8 @@ Route::group(['as' => 'fibonacci.'], function () {
             Route::post('reports/store', ['uses' => $namespacePrefix.'ReportsController@store',   'as' => 'store']);
             Route::delete('reports/delete/{id}', ['uses' => $namespacePrefix.'ReportsController@delete',  'as' => 'delete']);
             Route::post('reports/filter', ['uses' => $namespacePrefix.'ReportsController@ajax',  'as' => 'filterReport']);
+
+
         });
 
         event(new RoutingAdminAfter());
@@ -49,16 +51,21 @@ Route::group(['as' => 'fibonacci.'], function () {
 
 // Database Routes
 
+/*
 Route::group(['as' => 'voyager.'], function () {
     event(new Routing());
     $namespacePrefix='\\Kadevjo\\Fibonacci\\Controllers\\';
     Route::group(['middleware' => 'admin.user'], function () use ($namespacePrefix) {
         event(new RoutingAdmin());
-        //Route::resource('bread', "{$namespacePrefix}BreadController");
+        Route::get('bread', "{$namespacePrefix}BreadController@index");
+        Route::get('index', "{$namespacePrefix}BreadController@index");
+        Route::get('{table}/create', "{$namespacePrefix}BreadController@create");
+        Route::delete('{id}', "{$namespacePrefix}BreadController@destroy");
         Route::get('binnacle', "{$namespacePrefix}BinnacleController@binnacle");
         event(new RoutingAdminAfter());
     });
     event(new RoutingAfter());
 });
+*/
 
 
