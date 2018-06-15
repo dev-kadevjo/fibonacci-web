@@ -14,10 +14,10 @@ class AppCenter
 {
     private $baseUrl = "https://api.appcenter.ms/v0.1/apps/";
 
-    public static function sendNotification($name, $title, $body,$custom_data = null,$devices)
+    public static function sendNotification($name, $title, $body,$devices,$custom_data = null)
     {
         $client = new \GuzzleHttp\Client();
-        $response = $client->request('POST', $baseUrl.'/'.env('APPCENTER_OWNER').'/'.env('APPCENTER_APP').'/push/notifications',[
+        $response_droid = $client->request('POST', $baseUrl.'/'.env('APPCENTER_OWNER').'/'.env('APPCENTER_APP_ANDROID').'/push/notifications',[
             'header' =>['X-API-Token' => env('APPCENTER_TOKEN')],
             'body' => [
                 'notification_content' => [
@@ -32,6 +32,24 @@ class AppCenter
                 ]
             ],
         ]);
-        return json_decode($response->getBody(),true);
+
+        $response_ios = $client->request('POST', $baseUrl.'/'.env('APPCENTER_OWNER').'/'.env('APPCENTER_APP_IOS').'/push/notifications',[
+            'header' =>['X-API-Token' => env('APPCENTER_TOKEN')],
+            'body' => [
+                'notification_content' => [
+                    'name' => $name,
+                    'title' => $title,
+                    'body' => $body,
+                    'custom_data' => $custom_data
+                ],
+                'notification_target' => [
+                    'type' => 'devices_target',
+                    'devices' => $devices
+                ]
+            ],
+        ]);
+
+        return ["android" => json_decode($response_droid->getBody(),true),"ios" => json_decode($response_ios->getBody(),true)];
     }
+
 }

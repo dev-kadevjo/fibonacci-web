@@ -19,7 +19,7 @@ class Client extends Authenticatable implements JWTSubject
 
     public function __construct()
     {
-        $this->channels = [];
+        $this->channels = ['appcenter'];
     }
 
     public function getJWTIdentifier()
@@ -65,6 +65,15 @@ class Client extends Authenticatable implements JWTSubject
         $device->device_id = $device_id;
         $device->client_id = $this->id;
         $device->save();
+    }
+
+    public function setChannelsAttribute($value){
+        $this->attributes['channels'] = ($value) ? implode(',', $value):null;
+    }
+
+    public function getChannelsAttribute($value){
+
+        return ($value)?explode(',', $value):null;
     }
 
 }

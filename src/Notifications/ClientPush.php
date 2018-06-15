@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use  Kadevjo\Fibonacci\Channels\AppCenterChannel;
+use Kadevjo\Fibonacci\Channels\AppCenterChannel;
 
 class ClientPush extends Notification
 {
@@ -30,7 +30,14 @@ class ClientPush extends Notification
      */
     public function via($notifiable)
     {
-        return [AppCenterChannel::class];
+        $vias = collect([]);
+        foreach($notifiable->channels as $provider)
+        {
+            $vias->push(config('fibonacci.notification-channel')[$provider]);
+        }
+
+        return $vias->all();
+        //return [AppCenterChannel::class];
     }
 
     /**
@@ -39,22 +46,6 @@ class ClientPush extends Notification
      * @param  mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
-
-    public function toAppCenter($notifiable)
-    {
-        // ...
-    }
-
-
-    public function toOneSignal($notifiable)
-    {
-        // ...
-    }
-
-     public function toMail($notifiable)
-    {
-
-    }
 
     /**
      * Get the array representation of the notification.
@@ -68,4 +59,5 @@ class ClientPush extends Notification
             //
         ];
     }
+
 }
