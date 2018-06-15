@@ -3,7 +3,7 @@ namespace Kadevjo\Fibonacci\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Binnacle extends Model
+class NotificationDevice extends Model
 {
     protected $table = "notification_device";
 
