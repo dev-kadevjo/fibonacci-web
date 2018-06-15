@@ -3,7 +3,7 @@
 return [
     /**
      * Providers OAUTH 1.0
-     * For to authentication with providers who implements oauth 1.0 
+     * For to authentication with providers who implements oauth 1.0
      */
     'auth-social'=> [
         'passport' => [
@@ -15,5 +15,9 @@ return [
                 'consumer_secret' => null
             ]
         ]
+    ],
+    'notification-channel' =>
+    [
+        'appcenter' => '\Kadevjo\Fibonacci\Channels\AppCenterChannel',
     ]
 ];
