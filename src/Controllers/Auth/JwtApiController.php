@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class JwtApiController extends BaseController
 {
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     /**
      * Create a new AuthController instance.
      *
@@ -35,7 +36,6 @@ class JwtApiController extends BaseController
         }
         return response()->json(['error' => 'Unauthorized'], 401);
     }
-
     /**
      * Get the authenticated User.
      *
