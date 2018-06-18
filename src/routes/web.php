@@ -49,23 +49,22 @@ Route::group(['as' => 'fibonacci.'], function () {
     event(new RoutingAfter());
 });
 
-// Database Routes
 
-/*
+// Override of Voyager Bread Routes
 Route::group(['as' => 'voyager.'], function () {
     event(new Routing());
     $namespacePrefix='\\Kadevjo\\Fibonacci\\Controllers\\';
-    Route::group(['middleware' => 'admin.user'], function () use ($namespacePrefix) {
-        event(new RoutingAdmin());
-        Route::get('bread', "{$namespacePrefix}BreadController@index");
-        Route::get('index', "{$namespacePrefix}BreadController@index");
-        Route::get('{table}/create', "{$namespacePrefix}BreadController@create");
-        Route::delete('{id}', "{$namespacePrefix}BreadController@destroy");
-        Route::get('binnacle', "{$namespacePrefix}BinnacleController@binnacle");
-        event(new RoutingAdminAfter());
+
+ // BREAD Routes
+    Route::group([
+        'as'     => 'bread.',
+        'prefix' => 'bread',
+    ], function () use ($namespacePrefix) {
+        Route::get('/', ['uses' => $namespacePrefix.'BreadController@index',              'as' => 'index']);
+        Route::get('{table}/create', ['uses' => $namespacePrefix.'BreadController@create',     'as' => 'create']);
+        Route::post('/', ['uses' => $namespacePrefix.'BreadController@store',   'as' => 'store']);
+        Route::get('{table}/edit', ['uses' => $namespacePrefix.'BreadController@edit', 'as' => 'edit']);
     });
-    event(new RoutingAfter());
 });
-*/
 
 

@@ -73,9 +73,9 @@ class ManageAPIController extends BaseVoyagerController
                 ? $this->alertSuccess(__('voyager.database.success_created_api'))
                 : $this->alertError(__('voyager.database.error_creating_api'));
 
-            return redirect()->route('voyager.database.index')->with($data);
+            return redirect()->route('voyager.bread.index')->with($data);
         } catch (Exception $e) {
-            return redirect()->route('voyager.database.index')->with($this->alertException($e, 'Saving Failed'));
+            return redirect()->route('voyager.bread.index')->with($this->alertException($e, 'Saving Failed'));
         }
     }
 
@@ -109,7 +109,7 @@ class ManageAPIController extends BaseVoyagerController
                 ? $this->alertSuccess(__('voyager.database.success_update_api', ['datatype' => ($request->all())['table_name']]))
                 : $this->alertError(__('voyager.database.error_updating_api'));
 
-            return redirect()->route('voyager.database.index')->with($data);
+            return redirect()->route('voyager.bread.index')->with($data);
         } catch (Exception $e) {
             return back()->with($this->alertException($e, __('voyager.generic.update_failed')));
         }
@@ -126,7 +126,7 @@ class ManageAPIController extends BaseVoyagerController
             : $this->alertError(__('voyager.database.error_removing_api'));
 
 
-        return redirect()->route('voyager.database.index')->with($data);
+        return redirect()->route('voyager.bread.index')->with($data);
     }
 
     public function createObserver($model){
