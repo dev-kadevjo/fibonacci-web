@@ -13,6 +13,5 @@ class Report extends Model{
     protected static function boot()
     {
       parent::boot();
-      \App\Letter::observe(\App\Observers\LetterObserver::class);       
     } 
 }

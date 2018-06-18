@@ -2,17 +2,17 @@
 
 namespace Kadevjo\Fibonacci\Models;
 
-use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Kadevjo\Fibonacci\Traits\HasImageTrait;
 use Kadevjo\Fibonacci\Models\NotificationDevice;
+use Kadevjo\Fibonacci\Traits\Loggable; 
 
 
 class Client extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, Notifiable, HasImageTrait;
+    use Notifiable, HasImageTrait, Loggable;
 
     protected $table="client";
     protected $images = ["avatar"];
