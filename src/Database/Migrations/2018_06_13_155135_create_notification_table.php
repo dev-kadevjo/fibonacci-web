@@ -19,7 +19,7 @@ class CreateNotificationTable extends Migration
             $table->text('name');
             $table->text('title');
             $table->text('body');
-            $table->json('custom_data');
+            $table->longText('custom_data');
             $table->timestamps();
         });
     }

@@ -3,9 +3,11 @@
 namespace Kadevjo\Fibonacci\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Kadevjo\Fibonacci\Traits\Loggable; 
 
 class ApiConfig extends Model
 {
+    use Loggable;
     protected $table = 'api_config';
 
     protected $guarded = [];
@@ -61,11 +63,11 @@ class ApiConfig extends Model
     public function makeJson($requestData)
     { 
         return '{
-                    "browse": {"enable": '.( (isset($requestData["allow_browse"])) ? 'true' : 'false' ).',"secure": '.( (isset($requestData["secure_browse"])) ? 'true' : 'false' ).'},
-                    "read": {"enable": '.( (isset($requestData["allow_read"])) ? 'true' : 'false' ).',"secure": '.( (isset($requestData["secure_read"])) ? 'true' : 'false' ).'}, 
-                    "edit": {"enable": '.( (isset($requestData["allow_edit"])) ? 'true' : 'false' ).',"secure": '.( (isset($requestData["secure_edit"])) ? 'true' : 'false' ).'}, 
-                    "add": {"enable": '.( (isset($requestData["allow_add"])) ? 'true' : 'false' ).',"secure": '.( (isset($requestData["secure_add"])) ? 'true' : 'false' ).'}, 
-                    "delete": {"enable": '.( (isset($requestData["allow_delete"])) ? 'true' : 'false' ).',"secure": '.( (isset($requestData["secure_delete"])) ? 'true' : 'false' ).'} 
-                }';
+                "browse": {"enable": '.( (isset($requestData["allow_browse"])) ? 'true' : 'false' ).',"secure": '.( (isset($requestData["secure_browse"])) ? 'true' : 'false' ).'},
+                "read": {"enable": '.( (isset($requestData["allow_read"])) ? 'true' : 'false' ).',"secure": '.( (isset($requestData["secure_read"])) ? 'true' : 'false' ).'}, 
+                "edit": {"enable": '.( (isset($requestData["allow_edit"])) ? 'true' : 'false' ).',"secure": '.( (isset($requestData["secure_edit"])) ? 'true' : 'false' ).'}, 
+                "add": {"enable": '.( (isset($requestData["allow_add"])) ? 'true' : 'false' ).',"secure": '.( (isset($requestData["secure_add"])) ? 'true' : 'false' ).'}, 
+                "delete": {"enable": '.( (isset($requestData["allow_delete"])) ? 'true' : 'false' ).',"secure": '.( (isset($requestData["secure_delete"])) ? 'true' : 'false' ).'} 
+            }';
     }
 }
