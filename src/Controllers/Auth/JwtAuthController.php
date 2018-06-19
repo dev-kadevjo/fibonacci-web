@@ -7,7 +7,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
-class JwtApiController extends BaseController
+class JwtAuthController extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     /**
