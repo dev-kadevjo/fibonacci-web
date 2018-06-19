@@ -26,20 +26,16 @@ Route::group(['as' => 'fibonacci.'], function ()use ($namespacePrefix)
         // do nothing, might just be because table not yet migrated.
     }
 
-    Route::post('/login-provider',$namespacePrefix.'AuthAPIController@socialAuth');
+    Route::post('/login-provider',$namespacePrefix.'Auth\SocialAuthController@login');
 
     //jwt authentication routes
-
-
-    Route::post('login',$namespacePrefix.'Auth\JwtApiController@login');
-
+    Route::post('login',$namespacePrefix.'Auth\JwtAuthController@login');
     Route::middleware('jwt.auth')->group(function ()use ($namespacePrefix) {
-        Route::post('logout',$namespacePrefix.'Auth\JwtApiController@logout');
-        Route::post('refresh',$namespacePrefix.'Auth\JwtApiController@refresh');
-        Route::get('me', $namespacePrefix.'Auth\JwtApiController@me');
+        Route::post('logout',$namespacePrefix.'Auth\JwtAuthController@logout');
+        Route::post('refresh',$namespacePrefix.'Auth\JwtAuthController@refresh');
+        Route::get('me', $namespacePrefix.'Auth\JwtAuthController@me');
     });
 
 });
 
-Route::post('/getPublicToken',$namespacePrefix.'APIController@getToken');
 

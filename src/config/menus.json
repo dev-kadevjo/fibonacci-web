@@ -3,5 +3,5 @@
     "manage": "/manage",
     "reports": "/reports"
   },
-  "binnacle": "/binnacle"
+  "log": "/log"
 }
