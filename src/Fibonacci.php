@@ -3,7 +3,9 @@
 namespace Kadevjo\Fibonacci;
 
 use Illuminate\Http\Request;
-use Kadevjo\Fibonacci\Helpers\SocialAccount;
+use Kadevjo\Fibonacci\Helpers\FacebookAccount;
+use Kadevjo\Fibonacci\Helpers\OutlookAccount;
+use Kadevjo\Fibonacci\Helpers\TwitterAccount;
 
 class Fibonacci
 {
@@ -28,13 +30,13 @@ class Fibonacci
         switch( strtolower($provider))
         {
             case self::FACEBOOK:
-                $result = SocialAccount::facebookAuth($socialID, $data);
+                $result = FacebookAccount::Auth($socialID, $data);
                 break;
             case self::TWITTER:
-                $result =  SocialAccount::twitterAuth($socialID, $data);
+                $result =  TwitterAccount::Auth($socialID, $data);
                 break;
             case self::OUTLOOK:
-                $result =  SocialAccount::outlookAuth($socialID, $data);
+                $result =  OutlookAccount::Auth($socialID, $data);
                 break;
             default:
                 break;
