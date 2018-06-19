@@ -9,7 +9,7 @@ trait HasImageTrait
         if(in_array($key,$this->getImageArray()) && $this->isBase64($value)){
             $now = new \DateTime();
             $image = $value; // your base64 encoded
-            $image = str_replace('data:image/png;base64,', '', $image);
+            $image = str_replace('data:image/jpg;base64,', '', $image);
             $image = str_replace(' ', '+', $image);
             $name = $now->getTimestamp().'-'.str_random(5);
             \Storage::put('public/'.$key.'s/'.$name.'.jpg', base64_decode($image));

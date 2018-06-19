@@ -3,5 +3,8 @@
     "manage": "/manage",
     "reports": "/reports"
   },
-  "binnacle": "/binnacle"
+  "binnacle": "/binnacle",
+  "firebase": {
+      "database": "/realtime"
+  }
 }

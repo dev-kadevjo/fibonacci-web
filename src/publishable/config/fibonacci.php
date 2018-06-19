@@ -19,5 +19,8 @@ return [
     'notification-channel' =>
     [
         'appcenter' => '\Kadevjo\Fibonacci\Channels\AppCenterChannel',
+    ],
+    'firebase' => [
+        'live-model' => false
     ]
 ];
