@@ -1,11 +1,11 @@
 @extends('voyager::master')
 
-@section('page_title', __('voyager.generic.viewing').' Binnacle')
+@section('page_title', __('voyager.generic.viewing').' Log')
 
 @section('page_header')
     <div class="container-fluid">
         <h1 class="page-title">
-            <i class="icon voyager-file-text"></i> Binnacle
+            <i class="icon voyager-file-text"></i> Log
         </h1>
     </div>
 @stop
