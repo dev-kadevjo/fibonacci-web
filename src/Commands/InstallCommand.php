@@ -23,6 +23,7 @@ class InstallCommand extends Command
     $this->call('vendor:publish',[ '--provider'=>'Tymon\JWTAuth\Providers\LaravelServiceProvider']);
     $this->call('jwt:secret');
 
+    //migrating
     $this->info('Migrating the database tables into your application');
     $this->call('migrate', array('--path' => 'vendor/kadevjo/fibonacci/src/Database/Migrations'));
 
