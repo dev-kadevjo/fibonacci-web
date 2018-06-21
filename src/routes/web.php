@@ -55,7 +55,12 @@ Route::group(['as' => 'voyager.'], function () {
     event(new Routing());
     $namespacePrefix='\\Kadevjo\\Fibonacci\\Controllers\\';
 
- // BREAD Routes
+    // LOG
+    Route::group(['middleware' => 'admin.user'], function () use ($namespacePrefix) {        
+        Route::get('log', "{$namespacePrefix}LogController@log");
+    });
+
+    // BREAD Routes
     Route::group([
         'as'     => 'bread.',
         'prefix' => 'bread',

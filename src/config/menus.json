@@ -6,5 +6,6 @@
   "binnacle": "/binnacle",
   "firebase": {
       "database": "/realtime"
-  }
+  },
+  "log": "/log"
 }

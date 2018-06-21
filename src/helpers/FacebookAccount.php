@@ -1,6 +1,6 @@
 <?php
 
-namespace Kadevjo\Fibonacci\Controllers\Auth;
+namespace Kadevjo\Fibonacci\Helpers;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;

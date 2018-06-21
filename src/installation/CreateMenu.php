@@ -9,6 +9,7 @@ use TCG\Voyager\Models\Role;
 
 class CreateMenu{
   private static $menu;
+
   public static function buildMenu(){
     $menusConfig = json_decode(file_get_contents(__DIR__.'/../config/menus.json'), true);
     static::$menu = Menu::where('name', 'admin')->firstOrFail();
@@ -34,10 +35,11 @@ class CreateMenu{
   }
 
   private static function saveItem($title, $url, $parent=null, $table=null){
+    $prefix = 'admin';
     $menuItem = MenuItem::firstOrNew([
       'menu_id' => static::$menu->id,
       'title'   => $title,
-      'url'     => $url !== '' ? "/".config('voyager.prefix').$url : $url,
+      'url'     => $url !== '' ? "/".$prefix.$url : $url,
       'route'   => null,
     ]);
     if (!$menuItem->exists) {
