@@ -62,14 +62,11 @@ class APIController extends BaseVoyagerController
         if($request->has('filter'))
         {
             $filters = json_decode($request->input('filter'));
-
             $query = $modelClass::query();
-
             foreach ($filters as $filter)
             {
                 call_user_func_array( array($query, $filter->method), $filter->parameters );
             }
-
             $response = $query->get();
         }
         else
@@ -130,7 +127,6 @@ class APIController extends BaseVoyagerController
         if( !$this->checkAPI($slug,'add') ) return response()->json( array('error'=>'Action not allowed') );
 
         $modelClass = $this->getModel($slug);
-
         $requestData = $request->all();
 
         // Check for images to upload
@@ -282,11 +278,8 @@ class APIController extends BaseVoyagerController
                 foreach ($options->thumbnails as $thumbnail) {
                     $ext = explode('.', $data->{$row->field});
                     $extension = '.'.$ext[count($ext) - 1];
-
                     $path = str_replace($extension, '', $data->{$row->field});
-
                     $thumb_name = $thumbnail->name;
-
                     $this->deleteFileIfExists($path.'-'.$thumb_name.$extension);
                 }
             }
