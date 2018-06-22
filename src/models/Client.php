@@ -7,7 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Kadevjo\Fibonacci\Traits\HasImageTrait;
 use Kadevjo\Fibonacci\Models\NotificationDevice;
-use Kadevjo\Fibonacci\Traits\Loggable; 
+use Kadevjo\Fibonacci\Traits\Loggable;
 
 
 class Client extends Authenticatable implements JWTSubject
@@ -20,6 +20,8 @@ class Client extends Authenticatable implements JWTSubject
     public function __construct()
     {
         $this->channels = ['appcenter'];
+        $this->first_name = 'User';
+        $this->last_name = 'User Last Name';
     }
 
     public function getJWTIdentifier()

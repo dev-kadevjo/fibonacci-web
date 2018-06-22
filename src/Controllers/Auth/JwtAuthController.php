@@ -2,10 +2,14 @@
 
 namespace Kadevjo\Fibonacci\Controllers\Auth;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Kadevjo\Fibonacci\Models\Client;
+
 
 class JwtAuthController extends BaseController
 {
@@ -36,6 +40,36 @@ class JwtAuthController extends BaseController
         }
         return response()->json(['error' => 'Unauthorized'], 401);
     }
+
+    public function signup(Request $request) {
+        $requestData = $request->all();
+
+        $check = Client::where('email', '=', $requestData['email'])->first();
+        if ($check){
+          return response()->json(['error' => 'email already exist'], 401);
+        }
+
+        $newUser = new Client;
+        $newUser->email = $requestData['email'];
+        $newUser->password = $requestData['password'];
+
+        if(isset($requestData['avatar']))
+        $newUser->avatar = $requestData['avatar'];
+
+        if(isset($requestData['first_name']))
+        $newUser->first_name = $requestData['first_name'];
+
+        if(isset($requestData['last_name']))
+        $newUser->last_name = $requestData['last_name'];
+        $credentials = request(['email', 'password']);
+
+        $newUser->save();
+        if ($token = \JWTAuth::fromUser($newUser, $credentials)) {
+            return response()->json(['user'=>$newUser,'token'=>$token]);
+        }
+        return response()->json(['error' => 'Invalid parameters'], 401);
+
+      }
     /**
      * Get the authenticated User.
      *
