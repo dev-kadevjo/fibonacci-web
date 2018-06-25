@@ -9,7 +9,6 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kadevjo\Fibonacci\Models\Client;
-use Illuminate\Support\Facades\Hash;
 
 
 
@@ -53,7 +52,7 @@ class JwtAuthController extends BaseController
 
         $newUser = new Client;
         $newUser->email = $requestData['email'];
-        $newUser->password =  Hash::make($requestData['password']);
+        $newUser->password =  $requestData['password'];
 
         if(isset($requestData['avatar']))
         $newUser->avatar = $requestData['avatar'];

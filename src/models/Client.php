@@ -8,6 +8,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use Kadevjo\Fibonacci\Traits\HasImageTrait;
 use Kadevjo\Fibonacci\Models\NotificationDevice;
 use Kadevjo\Fibonacci\Traits\Loggable;
+use Illuminate\Support\Facades\Hash;
 
 
 class Client extends Authenticatable implements JWTSubject
@@ -71,6 +72,11 @@ class Client extends Authenticatable implements JWTSubject
 
     public function setChannelsAttribute($value){
         $this->attributes['channels'] = ($value) ? implode(',', $value):null;
+    }
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::make($value);
     }
 
     public function getChannelsAttribute($value){

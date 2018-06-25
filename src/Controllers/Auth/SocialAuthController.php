@@ -2,10 +2,16 @@
 
 namespace Kadevjo\Fibonacci\Controllers\Auth;
 
+use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Kadevjo\Fibonacci\Fibonacci;
+use Kadevjo\Fibonacci\Models\Client as User;
+use Validator;
 
 class SocialAuthController extends BaseController
 {
@@ -36,7 +42,7 @@ class SocialAuthController extends BaseController
         $user->avatar = $account->picture;
         $user->save();
       }
-      $token = $user->createToken(config('fibonacci.auth-social.passport.token'));
+      $token = \JWTAuth::fromUser($user);
       return response()->json(['user'=>$user,'token'=>$token->accessToken]);
     }
     
