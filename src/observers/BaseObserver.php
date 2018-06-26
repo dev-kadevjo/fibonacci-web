@@ -2,7 +2,7 @@
 namespace Kadevjo\Fibonacci\Observers;
 
 use Kadevjo\Fibonacci\Models\Client;
-use Kadevjo\Fibonacci\Models\Binnacle;
+use Kadevjo\Fibonacci\Models\Log;
 
 class BaseObserver
 {
@@ -56,7 +56,6 @@ class BaseObserver
         if($class && array_key_exists('Kadevjo\Fibonacci\Traits\Loggable',class_uses($class)))
         {
             $entity = class_basename($class);
-
             if(class_basename(\Auth::user())==class_basename(Client::class))
             {
                 $source = "api";
@@ -71,10 +70,8 @@ class BaseObserver
             }
             
             $author = is_null(\Auth::user())?null:\Auth::user()->email;
-            $id_table = $class->id;
-            
-            $data = ["entity"=>$entity,"action"=>$method,"source"=>$source,"author"=>$author, "id_table"=>$id_table];
-            
+            $id_table = $class->id;            
+            $data = ["entity"=>$entity,"action"=>$method,"source"=>$source,"author"=>$author, "id_table"=>$id_table];            
             $this->saveLoggable($data);
         }
     }
@@ -82,17 +79,13 @@ class BaseObserver
     // Get model by table name
     private function getModel($table){
         $name = studly_case(str_singular($table));
-        try {
-            
-            $entity = "App\\".$name;
-            
+        try {            
+            $entity = "App\\".$name;            
             $modelClass =  \App::make($entity);
         }
         catch (\Exception $e) 
-        {
-            
-            $entity = "TCG\Voyager\Models\\".$name;
-            
+        {            
+            $entity = "TCG\Voyager\Models\\".$name;            
             $modelClass =  \App::make($entity);
         }
         
@@ -100,9 +93,7 @@ class BaseObserver
     }
 
     public function saveLoggable(array $data){
-        
-        $binnacle = new Binnacle();
-        
-        $binnacle->forceFill($data)->save();
+        $log = new Log();        
+        $log->forceFill($data)->save();
     }
 }

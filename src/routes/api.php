@@ -14,7 +14,12 @@ Route::group(['as' => 'fibonacci.'], function ()use ($namespacePrefix)
         foreach (SchemaManager::listTableNames() as $value)
         {
             $breadController =  $namespacePrefix.'APIController';
-            Route::resource($value, $breadController);
+            //Route::resource($value, $breadController);
+            Route::get($value, $breadController.'@index');
+            Route::get($value.'/{id}', $breadController.'@show');
+            Route::post($value, $breadController.'@store');
+            Route::put($value.'/{id}', $breadController.'@update');
+            Route::delete($value.'/{id}', $breadController.'@destroy');
         }
     }
     catch (\InvalidArgumentException $e)

@@ -37,22 +37,32 @@ use Intervention\Image\Constraint;
 use Intervention\Image\Facades\Image;
 use TCG\Voyager\Http\Controllers\Controller as BaseVoyagerController;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Route;
 
 class APIController extends BaseVoyagerController
 {
     use BreadRelationshipParser;
 
     public function __construct(Request $request){
-
         if(count($request->segments())>0){
             $slug = $this->getSlug($request);
             $this->middleware('auth:api')->only( $this->makeSecure($slug) );
         }
     }
 
+    public function getSlug(Request $request)
+    {
+        if (isset($this->slug)) {
+            $slug = $this->slug;
+        } else {
+            $slug = explode ('/',Route::getFacadeRoot()->current()->uri())[1];
+
+            //$slug = explode('.', $request->route()->getName())[1];
+        }
+        return $slug;
+    }
     // Browse
     public function index(Request $request){
-
         $slug = $this->getSlug($request);
 
         if( !$this->checkAPI($slug,'browse') ) return  response()->json(array('error'=>'Action not allowed') );

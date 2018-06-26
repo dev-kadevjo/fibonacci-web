@@ -67,6 +67,21 @@
                                     <i class="voyager-trash"></i> {{ __('voyager::generic.delete') }}
                                 </a>
                             @else
+                                @if ($table->api>0)
+                                <a href="{{ route('fibonacci.database.api.edit', $table->name) }}"
+                                   class="btn-sm btn-success browse_bread api">
+                                   <i class="voyager-plug"></i> {{ __('fibonacci.database.edit_api_button') }}
+                                </a>
+                                <div api data-id="{{ $table->name }}" data-name="{{ $table->name }}"
+                                     class="btn-sm btn-danger bread_delete" style="display:inline">
+                                     <i class="voyager-trash"></i> {{ __('fibonacci.database.delete_api') }}
+                                </div>
+                                @else
+                                    <a href="{{ route('fibonacci.database.api.create', $table->name) }}"
+                                    class="btn-sm btn-default api">
+                                    {{ __('fibonacci.database.add_api') }}
+                                    </a>
+                                @endif
                                 <a href="{{ route('voyager.bread.create', ['name' => $table->name]) }}"
                                    class="_btn btn-default btn-sm pull-right">
                                     <i class="voyager-plus"></i> {{ __('voyager::bread.add_bread') }}
