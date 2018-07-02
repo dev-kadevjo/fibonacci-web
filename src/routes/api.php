@@ -41,6 +41,7 @@ Route::group(['as' => 'fibonacci.'], function ()use ($namespacePrefix)
         Route::post('logout',$namespacePrefix.'Auth\JwtAuthController@logout');
         Route::post('refresh',$namespacePrefix.'Auth\JwtAuthController@refresh');
         Route::get('me', $namespacePrefix.'Auth\JwtAuthController@me');
+        
     });
 });
 

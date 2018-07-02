@@ -14,7 +14,7 @@ class AppCenter
 {
     private $baseUrl = "https://api.appcenter.ms/v0.1/apps/";
 
-    public static function sendNotification($name, $title, $body,$devices,$custom_data = null)
+    public static function sendNotification($name, $title, $body,$devices_ios,$devices_droid,$custom_data = null)
     {
         $client = new \GuzzleHttp\Client();
         $response_droid = $client->request('POST', $baseUrl.'/'.env('APPCENTER_OWNER').'/'.env('APPCENTER_APP_ANDROID').'/push/notifications',[
@@ -28,7 +28,7 @@ class AppCenter
                 ],
                 'notification_target' => [
                     'type' => 'devices_target',
-                    'devices' => $devices
+                    'devices' => $devices_droid
                 ]
             ],
         ]);
@@ -44,7 +44,7 @@ class AppCenter
                 ],
                 'notification_target' => [
                     'type' => 'devices_target',
-                    'devices' => $devices
+                    'devices' => $devices_ios
                 ]
             ],
         ]);

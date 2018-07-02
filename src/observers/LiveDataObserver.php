@@ -23,12 +23,15 @@ class LiveDataObserver
 
     public function creating(LiveData $data)
     {
-        $livedata = $this->database()->getReference('data/'.$data->folder)->push([
+        //dd(json_decode($data->metadata,true));
+        /* $livedata = $this->database()->getReference('data/'.$data->folder)->push([
             'name' => $data->name,
             'type' => $data->type,
             'state' => $data->state,
-            'metadata' => $data->metadata
+            'metadata' => json_decode($data->metadata,true)
             ]);
+            */
+        $livedata = $this->database()->getReference('data/'.$data->folder)->push(json_decode($data->metadata,true));
         $data->key= $livedata->getKey();
 
         return $data;

@@ -52,12 +52,12 @@ class Client extends Authenticatable implements JWTSubject
 
     public function routeNotificationForOneSignal()
     {
-        return \Kadevjo\Fibonacci\Models\NotificationDevice::where('user_id',$this->id)->where('provider','onesignal')->get()->pluck('device_id');
+        return \Kadevjo\Fibonacci\Models\NotificationDevice::where('client_id',$this->id)->where('provider','onesignal')->get()->pluck('device_id');
     }
 
     public function routeNotificationForAppCenter($device)
     {
-        return \Kadevjo\Fibonacci\Models\NotificationDevice::where('user_id',$this->id)->where('provider','appcenter')->where('type',$device)->get()->pluck('device_id');
+        return \Kadevjo\Fibonacci\Models\NotificationDevice::where('client_id',$this->id)->where('provider','appcenter')->where('type',$device)->get()->pluck('device_id');
     }
 
     public function addDevice($provider,$type,$device_id)
@@ -68,6 +68,7 @@ class Client extends Authenticatable implements JWTSubject
         $device->device_id = $device_id;
         $device->client_id = $this->id;
         $device->save();
+        return $device;
     }
 
     public function setChannelsAttribute($value){

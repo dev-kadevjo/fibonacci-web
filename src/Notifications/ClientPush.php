@@ -17,9 +17,19 @@ class ClientPush extends Notification
      *
      * @return void
      */
-    public function __construct()
+
+    public $name;
+    public $title;
+    public $body;
+    public $custom_data;
+
+    
+    public function __construct($new_name = null,$new_title = null,$new_body = null ,$new_custom_data=null)
     {
-        //
+        $this->name = $new_name;
+        $this->title = $new_title;
+        $this->body = $new_body;
+        $this->custom_data = $new_custom_data;
     }
 
     /**
@@ -38,6 +48,11 @@ class ClientPush extends Notification
 
         return $vias->all();
         //return [AppCenterChannel::class];
+    }
+
+    public function toAppCenter($notifiable)
+    {
+        // ...
     }
 
     /**

@@ -67,7 +67,7 @@ class ManageAPIController extends BaseVoyagerController
             $nameModel = Str::singular($newRow->table_name);
             $this->createObserver($nameModel);
             $this->editModelRW(ucwords($nameModel));
-            $this->editObserver($nameModel,$newRow);
+            //$this->editObserver($nameModel,$newRow);
 
             $data = $newRow->save()
                 ? $this->alertSuccess(__('voyager.database.success_created_api'))
@@ -102,8 +102,8 @@ class ManageAPIController extends BaseVoyagerController
             $targetRow->restoring_o  = ($request->all())['restoring_o'];
             $targetRow->restored_o  = ($request->all())['restored_o'];
             $nameModel = Str::singular($targetRow->table_name);
-            $this->createObserver($nameModel);
-            $this->editObserver($nameModel,$targetRow);
+            //$this->createObserver($nameModel);
+            //$this->editObserver($nameModel,$targetRow);
 
             $data = $targetRow->save()
                 ? $this->alertSuccess(__('voyager.database.success_update_api', ['datatype' => ($request->all())['table_name']]))

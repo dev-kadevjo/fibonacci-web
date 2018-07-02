@@ -2,8 +2,8 @@
 
 namespace Kadevjo\Fibonacci\Channels;
 
-//use Illuminate\Notifications\Notification;
-use Kadevjo\Fibonacci\Models\Notification;
+
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
 use Kadevjo\Fibonacci\Helpers\AppCenter;
 
@@ -25,6 +25,6 @@ class AppCenterChannel
     public function send($notifiable, Notification $notification)
     {
         //send notification
-        return AppCenter::sendNotification($notification->name, $notification->title, $notification->body,$notifiable->routeNotificationForAppCenter,$notification->custom_data);
+        return AppCenter::sendNotification($notification->name, $notification->title, $notification->body,$notifiable->routeNotificationForAppCenter('ios'),$notifiable->routeNotificationForAppCenter('droid'),$notification->custom_data);
     }
 }

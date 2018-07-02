@@ -17,6 +17,7 @@ class CreateLiveDataTable extends Migration
             $table->increments('id');
             $table->text('key');
             $table->text('name');
+            $table->text('folder');
             $table->text('type');
             $table->text('state');
             $table->json('metadata');
