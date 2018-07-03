@@ -84,5 +84,4 @@ class Client extends Authenticatable implements JWTSubject
 
         return ($value)?explode(',', $value):null;
     }
-
 }
