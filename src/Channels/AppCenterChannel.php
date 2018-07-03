@@ -25,6 +25,7 @@ class AppCenterChannel
     public function send($notifiable, Notification $notification)
     {
         //send notification
-        return AppCenter::sendNotification($notification->name, $notification->title, $notification->body,$notifiable->routeNotificationForAppCenter('ios'),$notifiable->routeNotificationForAppCenter('droid'),$notification->custom_data);
+        $reflection = new \ReflectionClass(get_class($notifiable));
+        return AppCenter::sendNotification($notification->name, $notification->title, $notification->body,$notifiable->routeNotificationForAppCenter('ios'),$notifiable->routeNotificationForAppCenter('droid'),$reflection->getShortName(),$notification->custom_data);
     }
 }

@@ -22,5 +22,19 @@ return [
     ],
     'firebase' => [
         'live-model' => false
+    ],
+    'appcenter' => [
+        'Client' =>[
+            'token' => 'tkappcl',
+            'owner' => 'clinetowner',
+            'ios' => 'clientios',
+            'droid' => 'clientdroid'
+        ],
+        'Driver' =>[
+            'token' => 'drivertok',
+            'owner' => 'drivown',
+            'ios' => 'drivios',
+            'droid' => 'drivdroid'
+        ]
     ]
 ];

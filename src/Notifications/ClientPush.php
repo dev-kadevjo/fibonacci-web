@@ -22,7 +22,6 @@ class ClientPush extends Notification
     public $title;
     public $body;
     public $custom_data;
-
     
     public function __construct($new_name = null,$new_title = null,$new_body = null ,$new_custom_data=null)
     {
