@@ -21,7 +21,9 @@ return [
         'appcenter' => '\Kadevjo\Fibonacci\Channels\AppCenterChannel',
     ],
     'firebase' => [
-        'live-model' => false
+        'live-model' => false,
+        'override' => false
+
     ],
     'appcenter' => [
         'Client' =>[

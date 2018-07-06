@@ -130,6 +130,7 @@ class ManageAPIController extends BaseVoyagerController
     }
 
     public function createObserver($model){
+        /*
         $observersDir = app_path('Observers');
         $fileData = new Filesystem();
         if (!$fileData->exists($observersDir)) {
@@ -141,8 +142,7 @@ class ManageAPIController extends BaseVoyagerController
         $observerText = str_replace($observerConstans, $observerStString, $observerStubContent);
         $observerDirectory = ucwords($model)."Observer";
         $fileData->put(app_path('Observers' . '/' . $observerDirectory . '.php'), $observerText);
-
-
+        */
     }
 
     public function editModelRW($name){

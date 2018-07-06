@@ -19,11 +19,8 @@ class AppCenter
         $credencials =  config('fibonacci.appcenter.'.$class_name);
         if(!$credencials)
             return ["error" => "invalid credencials"];
-
-        dd($credencials);
         $client = new \GuzzleHttp\Client();
         $baseUrl = "https://api.appcenter.ms/v0.1/apps/";
-       
         $response_droid = $client->request('POST', $baseUrl.$credencials['owner'].'/'.$credencials['droid'].'/push/notifications',[
             'headers' =>['X-API-Token' => $credencials['token'], 'Content-Type' => 'application/json'],
             'body' => json_encode([
@@ -39,7 +36,7 @@ class AppCenter
                 ]
             ]),
         ]);
-            
+
         $response_ios = $client->request('POST', $baseUrl.$credencials['owner'].'/'.$credencials['ios'].'/push/notifications',[
             'headers' =>[
                 'X-API-Token' => $credencials['token'],
@@ -58,8 +55,6 @@ class AppCenter
                 ]
             ]),
         ]);
-
         return ["android" => json_decode($response_droid->getBody(),true),"ios" => json_decode($response_ios->getBody(),true)];
     }
-
 }

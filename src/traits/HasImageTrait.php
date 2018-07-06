@@ -20,8 +20,7 @@ trait HasImageTrait
         }
 
     }
-
-
+    
     public function toArray()
     {
         $array = parent::toArray();

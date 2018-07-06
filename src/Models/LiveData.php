@@ -39,4 +39,15 @@ class LiveData extends Model
         return $value;
     }
 
+    public function setMetadataAttribute($value){
+        if($this->key){
+            if(config('fibonacci.firebase')['override'])
+                $this->database()->getReference('data/'.$this->folder.'/'.$this->key.'/content')->set($value);
+            else
+                $this->database()->getReference('data/'.$this->folder.'/'.$this->key.'/content')->update($value);
+            $this->attributes['metadata'] = json_encode($value);    
+        }
+        return null;
+    }
+
 }
