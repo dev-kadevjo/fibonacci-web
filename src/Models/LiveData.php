@@ -32,13 +32,37 @@ class LiveData extends Model
         return $firebase->getDatabase();
     }
 
+    public function send($metadata = null,$state = null){
+        if($state)
+            $this->state = $state;
+            
+        $this->database()->getReference('data/'.$this->folder.'/'.$this->key.'/messages')->push(
+            [
+                'content' => $this->metadata,
+                'channel' => $this->folder.'-'.$this->counter,
+                'event' => $this->state,
+                'timestamp' => \Carbon\Carbon::now()->timestamp,
+                'content' => $metadata
+            ]
+        );
+        $this->counter += 1;
+        $this->save();
+    }
+    
+    public function getReference($child = null){
+        if(config('fibonacci.firebase')['live-model'] && $this->id && $this->key && $this->folder){
+            return $this->database()->getReference('data/'.$this->folder.'/'.$this->key.$child);
+        }
+        return null;
+    }
+    /*
     public function getMetadataAttribute($value){
         if(config('fibonacci.firebase')['live-model'] && $this->id && $this->key && $this->folder){
             return json_encode($this->database()->getReference('data/'.$this->folder.'/'.$this->key)->getSnapshot()->getValue());
         }
         return $value;
+    
     }
-
     public function setMetadataAttribute($value){
         if(($this->key != null) && $value){
             if(config('fibonacci.firebase')['override'])
@@ -49,5 +73,6 @@ class LiveData extends Model
         $this->attributes['metadata'] = json_encode($value); //encoding, because database doesnt support array    
         return null;
     }
+    */
 
 }

@@ -9,6 +9,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kadevjo\Fibonacci\Models\Client;
+use Validator;
 
 
 
@@ -24,7 +25,6 @@ class JwtAuthController extends BaseController
 
     public function __construct()
     {
-        //$this->middleware('auth:api', ['except' => ['login']]);
     }
 
     /**
@@ -43,6 +43,20 @@ class JwtAuthController extends BaseController
     }
 
     public function signup(Request $request) {
+
+        $validation =Validator::make($request->all(),[
+
+            //client validation
+            'email'=> 'required|email',
+            'first_name' => 'required|alpha_dash',
+            'last_name' => 'required|alpha_dash',
+            'avatar' => 'required',
+            'password' =>'required',
+        ]);
+
+        if ($validation->fails()) 
+        return response()->json(['error' => $validation->errors()], 400);   
+
         $requestData = $request->all();
 
         $check = Client::where('email', '=', $requestData['email'])->first();
@@ -65,7 +79,7 @@ class JwtAuthController extends BaseController
         $credentials = request(['email', 'password']);
 
         $newUser->save();
-        if ($token = \JWTAuth::fromUser($newUser, $credentials)) {
+        if ($token = auth('api')->attempt($credentials)) {
             return response()->json(['user'=>$newUser,'token'=>$token]);
         }
         return response()->json(['error' => 'Invalid parameters'], 401);

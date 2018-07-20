@@ -21,6 +21,7 @@ class CreateLiveDataTable extends Migration
             $table->text('type');
             $table->text('state');
             $table->json('metadata');
+            $table->integer('counter')->default(0);
             $table->timestamps();
         });
     }

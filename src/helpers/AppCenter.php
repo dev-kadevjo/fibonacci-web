@@ -37,6 +37,7 @@ class AppCenter
             ]),
         ]);
 
+        if(count($devices_ios)>0)
         $response_ios = $client->request('POST', $baseUrl.$credencials['owner'].'/'.$credencials['ios'].'/push/notifications',[
             'headers' =>[
                 'X-API-Token' => $credencials['token'],

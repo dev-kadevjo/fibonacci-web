@@ -26,8 +26,7 @@ class LiveDataObserver
         $livedata = $this->database()->getReference('data/'.$data->folder)->push([
             'name' => $data->name,
             'type' => $data->type,
-            'state' => $data->state,
-            'content' => json_decode($data->metadata) //used decode, because database doesnt support array in save
+            'state' => $data->state
             ]);
         //$livedata = $this->database()->getReference('data/'.$data->folder)->push($data->metadata);
         $data->key= $livedata->getKey();
@@ -36,7 +35,7 @@ class LiveDataObserver
 
     public function updating(LiveData $data)
     {
-        $this->database()->getReference('data/'.$data->folder.'/'.$data->key)->update($data->makeHidden(['created_at','updated_at','key','id','folder'])->toArray());
+        //$this->database()->getReference('data/'.$data->folder.'/'.$data->key)->update($data->makeHidden(['created_at','updated_at','key','id','folder'])->toArray());
     }
 
     /**

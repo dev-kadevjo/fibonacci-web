@@ -62,7 +62,7 @@ class Client extends Authenticatable implements JWTSubject
 
     public function addDevice($provider,$type,$device_id)
     {
-        $device = \Kadevjo\Fibonacci\Models\NotificationDevice::where('client_id',$this-id)->where('device_id',$device_id)->where('type',$type)-first(); 
+        $device = \Kadevjo\Fibonacci\Models\NotificationDevice::where('client_id',$this->id)->where('device_id',$device_id)->where('type',$type)->first(); 
         if($device)
             return $device;
         
