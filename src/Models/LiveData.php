@@ -38,11 +38,10 @@ class LiveData extends Model
             
         $this->database()->getReference('data/'.$this->folder.'/'.$this->key.'/messages')->push(
             [
-                'content' => $this->metadata,
-                'channel' => $this->folder.'-'.$this->counter,
-                'event' => $this->state,
-                'timestamp' => \Carbon\Carbon::now()->timestamp,
-                'content' => $metadata
+                'Channel' => $this->folder.'-'.$this->counter,
+                'Event' => $this->state,
+                'Timestamp' => \Carbon\Carbon::now()->timestamp,
+                'Content' => $metadata
             ]
         );
         $this->counter += 1;

@@ -21,6 +21,7 @@ class AppCenter
             return ["error" => "invalid credencials"];
         $client = new \GuzzleHttp\Client();
         $baseUrl = "https://api.appcenter.ms/v0.1/apps/";
+        if(count($devices_droid)>0)
         $response_droid = $client->request('POST', $baseUrl.$credencials['owner'].'/'.$credencials['droid'].'/push/notifications',[
             'headers' =>['X-API-Token' => $credencials['token'], 'Content-Type' => 'application/json'],
             'body' => json_encode([
@@ -36,26 +37,35 @@ class AppCenter
                 ]
             ]),
         ]);
-
         if(count($devices_ios)>0)
-        $response_ios = $client->request('POST', $baseUrl.$credencials['owner'].'/'.$credencials['ios'].'/push/notifications',[
-            'headers' =>[
-                'X-API-Token' => $credencials['token'],
-                'Content-Type' => 'application/json'
-            ],
-            'body' => json_encode([
-                'notification_content' => [
-                    'name' => $name,
-                    'title' => $title,
-                    'body' => $body,
-                    'custom_data' => $custom_data
+         $response_ios = $client->request('POST', $baseUrl.$credencials['owner'].'/'.$credencials['ios'].'/push/notifications',[
+                'headers' =>[
+                    'X-API-Token' => $credencials['token'],
+                    'Content-Type' => 'application/json'
                 ],
-                'notification_target' => [
-                    'type' => 'devices_target',
-                    'devices' => $devices_ios
-                ]
-            ]),
-        ]);
-        return ["android" => json_decode($response_droid->getBody(),true),"ios" => json_decode($response_ios->getBody(),true)];
+                'body' => json_encode([
+                    'notification_content' => [
+                        'name' => $name,
+                        'title' => $title,
+                        'body' => $body,
+                        'custom_data' => $custom_data
+                    ],
+                    'notification_target' => [
+                        'type' => 'devices_target',
+                        'devices' => $devices_ios
+                    ]
+                ]),
+            ]);
+        if(count($devices_ios)>0 && count($devices_droid)>0 ){
+            return ["android" => json_decode($response_droid->getBody(),true),"ios" => json_decode($response_ios->getBody(),true)];
+        }elseif(count($devices_droid)>0){
+            return ["android" => json_decode($response_droid->getBody(),true),"ios" => ""];
+        }
+        elseif(count($devices_ios)>0){
+            return ["android" => "","ios" => json_decode($response_ios->getBody(),true)];
+        }else{
+            return ["android" => "","ios" => ""];
+        }
+       
     }
 }
