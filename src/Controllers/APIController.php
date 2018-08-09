@@ -125,7 +125,8 @@ class APIController extends BaseVoyagerController
         }
 
         if( $update->forceFill($requestData)->save() ){
-            return response()->json( array('state'=>'success') );
+            return $update; //success return the model
+            //return response()->json( array('state'=>'success') );
         }else{
             return response()->json( array('state'=>'error') );
         }
@@ -152,7 +153,8 @@ class APIController extends BaseVoyagerController
                 unset($requestData[$key]);
         }
         if( $modelClass->forceFill($requestData)->save() ){
-            return response()->json( array('state'=>'success') );
+            return $modelClass; // success in create the object
+            //return response()->json( array('state'=>'success') );
         }else{
             return response()->json( array('state'=>'error') );
         }
