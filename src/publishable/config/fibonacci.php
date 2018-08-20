@@ -14,7 +14,8 @@ return [
                 'consumer_key' => null,
                 'consumer_secret' => null
             ]
-        ]
+        ],
+        'model' => '\App\Client'
     ],
     'notification-channel' =>
     [
