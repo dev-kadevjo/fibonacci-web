@@ -30,7 +30,7 @@ class SocialAuthController extends BaseController
 
       $provider = $request->json('provider');
       $socialID = $request->json('identifier');
-      $token = json_decode($request->json('verifier'),true);
+      $token = $request->json('verifier');
       $account =  Fibonacci::authenticateSocial($provider, $socialID, $token);
       
       $user = User::whereNotNull('email')->where('email', $account->email)->first();
@@ -44,7 +44,7 @@ class SocialAuthController extends BaseController
       }
 
       $token = \JWTAuth::fromUser($user);
-      return response()->json(['user'=>$user,'token'=>$token->accessToken]);
+      return response()->json(['user'=>$user,'token'=>$token]);
     }
     
 }
