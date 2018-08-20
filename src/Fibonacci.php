@@ -23,7 +23,7 @@ class Fibonacci
         require __DIR__.'/routes/api.php';
     }
 
-    public static function authenticateSocial($provider, $socialID, array $data)
+    public static function authenticateSocial($provider, $socialID, $data)
     {
         $result = array();
 

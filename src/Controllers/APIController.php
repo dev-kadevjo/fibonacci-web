@@ -186,6 +186,7 @@ class APIController extends BaseVoyagerController
         Storage::disk(config('voyager.storage.disk'))->put($fullPath, (string) $image, 'public');
 
         return $fullPath;
+        
     }
 
     // Delete

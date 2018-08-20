@@ -18,9 +18,9 @@ class FacebookAccount
 
     public static function Auth($userId, $token)
     {
-        if( !array_key_exists('access_token',$token) ) throw new ConfigException("An error ocurred");
+        if( !$token ) throw new ConfigException("An error ocurred");
         $resource = "https://graph.facebook.com/v2.8/".$userId."?fields=email,first_name,last_name,picture";
-        $path = $resource."&access_token=".$token['access_token'];
+        $path = $resource."&access_token=".$token;
         $client = new Client(['base_uri' => 'https://foo.com/api/']);
         $request = $client->get($path);
         $response = json_decode($request->getBody()->getContents());
