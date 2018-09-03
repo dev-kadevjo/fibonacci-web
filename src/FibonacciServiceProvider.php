@@ -32,8 +32,8 @@ class FibonacciServiceProvider extends ServiceProvider
             $this->registerConsoleCommands();
         }
 
-        \Config::set('auth.guards.api',     ['driver'   => 'jwt','provider' => 'clients']);
-        \Config::set('auth.providers.clients',  ['driver'   => 'eloquent','model'   => \Kadevjo\Fibonacci\Models\Client::class]);
+        //\Config::set('auth.guards.api',     ['driver'   => 'jwt','provider' => 'clients']);
+        //\Config::set('auth.providers.clients',  ['driver'   => 'eloquent','model'   => \Kadevjo\Fibonacci\Models\Client::class]);
     }
 
     public function provides() {
