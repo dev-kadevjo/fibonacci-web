@@ -10,7 +10,6 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Kadevjo\Fibonacci\Fibonacci;
-//use Kadevjo\Fibonacci\Models\Client as User;
 use Validator;
 
 class SocialAuthController extends BaseController
@@ -19,13 +18,20 @@ class SocialAuthController extends BaseController
     
     public function login(Request $request)
     {
-      $userClass = config('fibonacci')['auth-social']['model'];
+      $userClass = config('fibonacci.auth.model');
+
+      if(is_null($userClass))        
+          return response()->json( array('error'=>"Model isn't defined"));
+          
+      if(!$user = \App::make($userClass)  instanceof ClientAuthenticable)
+          return response()->json( array('error'=>"Model isn't extends of fibonacci client"));
 
       $validator = Validator::make($request->json()->all(), [
         'provider' => 'required',
         'identifier'  => 'required',
         'verifier' => 'required'
       ]);
+
       if( $validator->fails() ) {
         return response()->json( array('error'=>'not enough data'));
       }
@@ -34,15 +40,12 @@ class SocialAuthController extends BaseController
       $socialID = $request->json('identifier');
       $token = $request->json('verifier');
       $account =  Fibonacci::authenticateSocial($provider, $socialID, $token);
-      
-      //$user = User::whereNotNull('email')->where('email', $account->email)->first();
       $user = $userClass::whereNotNull('email')->where('email', $account->email)->first();
       if( $user == null ) {
         $user = new $userClass();
-        $user->first_name = $account->first_name;
-        $user->last_name = $account->last_name;
+        $user->name = "{$account->first_name} {$account->last_name}";
         $user->email = $account->email;
-        $user->avatar = $account->picture;
+        $user->picture = $account->picture;
         $user->save();
       }
 

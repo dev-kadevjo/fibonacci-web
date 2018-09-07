@@ -2,28 +2,15 @@
 
 namespace Kadevjo\Fibonacci\Models;
 
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-use Kadevjo\Fibonacci\Traits\HasImageTrait;
-use Kadevjo\Fibonacci\Models\NotificationDevice;
-use Kadevjo\Fibonacci\Traits\Loggable;
 use Illuminate\Support\Facades\Hash;
 
 
 class Client extends Authenticatable implements JWTSubject
 {
-    use Notifiable, HasImageTrait, Loggable;
+    protected $images = ["picture"];
 
-    protected $table="client";
-    protected $images = ["avatar"];
-
-    public function __construct()
-    {
-        $this->channels = ['appcenter'];
-        $this->first_name = 'User';
-        $this->last_name = 'User Last Name';
-    }
 
     public function getJWTIdentifier()
     {
@@ -40,52 +27,8 @@ class Client extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function notifications()
-    {
-        return $this->hasMany('Kadevjo\Fibonacci\Models\Notification');
-    }
-
-    public function devices()
-    {
-        return $this->hasMany('Kadevjo\Fibonacci\Models\NotificationDevice');
-    }
-
-    public function routeNotificationForOneSignal()
-    {
-        return \Kadevjo\Fibonacci\Models\NotificationDevice::where('client_id',$this->id)->where('provider','onesignal')->get()->pluck('device_id');
-    }
-
-    public function routeNotificationForAppCenter($device)
-    {
-        return \Kadevjo\Fibonacci\Models\NotificationDevice::where('client_id',$this->id)->where('provider','appcenter')->where('type',$device)->get()->pluck('device_id');
-    }
-
-    public function addDevice($provider,$type,$device_id)
-    {
-        $device = \Kadevjo\Fibonacci\Models\NotificationDevice::where('client_id',$this->id)->where('device_id',$device_id)->where('type',$type)->first(); 
-        if($device)
-            return $device;
-        
-        $device =  new \Kadevjo\Fibonacci\Models\NotificationDevice();
-        $device->provider = $provider;
-        $device->type = $type;
-        $device->device_id = $device_id;
-        $device->client_id = $this->id;
-        $device->save();
-        return $device;
-    }
-
-    public function setChannelsAttribute($value){
-        $this->attributes['channels'] = ($value) ? implode(',', $value):null;
-    }
-
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);
-    }
-
-    public function getChannelsAttribute($value){
-
-        return ($value)?explode(',', $value):null;
     }
 }

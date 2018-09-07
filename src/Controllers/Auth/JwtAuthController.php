@@ -8,7 +8,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Kadevjo\Fibonacci\Models\Client;
+use Kadevjo\Fibonacci\Models\Client as ClientAuthenticable;
 use Validator;
 
 
@@ -34,23 +34,38 @@ class JwtAuthController extends BaseController
      */
     public function login()
     {
+        $userClass = config('fibonacci.auth.model');
+        
+        if(is_null($userClass))        
+            return response()->json( array('error'=>"Model {$userClass} isn't defined"));
+        
+        if(!$user = \App::make($userClass)  instanceof ClientAuthenticable)
+            return response()->json( array('error'=>"Model {$userClass} should extends of fibonacci client"));
+
         $credentials = request(['email', 'password']);
-        if ($token = auth('api')->attempt($credentials)) {
-            $user = \Kadevjo\Fibonacci\Models\Client::where('email',$credentials['email'])->first();
+        
+        if ($token = auth('api')->attempt($credentials)) 
+        {
+            $user = $userClass::where('email',$credentials['email'])->first();
             return response()->json(['user'=>$user,'token'=>$token]);
         }
         return response()->json(['error' => 'Unauthorized'], 401);
     }
 
-    public function signup(Request $request) {
+    public function signup(Request $request) 
+    {
+        $userClass = config('fibonacci.auth.model');
+
+        if(is_null($userClass))        
+            return response()->json( array('error'=>"Model {$userClass} isn't defined"));
+        
+        if(!$user = \App::make($userClass)  instanceof ClientAuthenticable)
+            return response()->json( array('error'=>"Model {$userClass} should extends of fibonacci client"));
 
         $validation =Validator::make($request->all(),[
-
             //client validation
             'email'=> 'required|email',
-            'first_name' => 'required|alpha_dash',
-            'last_name' => 'required|alpha_dash',
-            'avatar' => 'required',
+            'name' => 'alpha_dash',
             'password' =>'required',
         ]);
 
@@ -59,28 +74,28 @@ class JwtAuthController extends BaseController
 
         $requestData = $request->all();
 
-        $check = Client::where('email', '=', $requestData['email'])->first();
+        $check = $userClass::where('email', '=', $requestData['email'])->first();
         if ($check){
           return response()->json(['error' => 'email already exist'], 401);
         }
 
-        $newUser = new Client;
-        $newUser->email = $requestData['email'];
-        $newUser->password =  $requestData['password'];
+        $user = new $userClass;
 
-        if(isset($requestData['avatar']))
-        $newUser->avatar = $requestData['avatar'];
+        $user->email = $requestData['email'];
+        
+        $user->password =  $requestData['password'];
 
-        if(isset($requestData['first_name']))
-        $newUser->first_name = $requestData['first_name'];
+        if(isset($requestData['picture']))
+            $user->picture = $requestData['picture'];
 
-        if(isset($requestData['last_name']))
-        $newUser->last_name = $requestData['last_name'];
+        if(isset($requestData['name']))
+            $user->name = $requestData['name'];
+
         $credentials = request(['email', 'password']);
 
-        $newUser->save();
+        $user->save();
         if ($token = auth('api')->attempt($credentials)) {
-            return response()->json(['user'=>$newUser,'token'=>$token]);
+            return response()->json(['user'=>$user,'token'=>$token]);
         }
         return response()->json(['error' => 'Invalid parameters'], 401);
 
