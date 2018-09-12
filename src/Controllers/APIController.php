@@ -56,8 +56,6 @@ class APIController extends BaseVoyagerController
             $slug = $this->slug;
         } else {
             $slug = explode ('/',Route::getFacadeRoot()->current()->uri())[1];
-
-            //$slug = explode('.', $request->route()->getName())[1];
         }
         return $slug;
     }
@@ -65,7 +63,7 @@ class APIController extends BaseVoyagerController
     public function index(Request $request){
         $slug = $this->getSlug($request);
 
-        if( !$this->checkAPI($slug,'browse') ) return  response()->json(array('error'=>'Action not allowed') );
+        if( !$this->checkAPI($slug,'browse') ) return  response()->json(array('error'=>'Action not allowed'),405);
 
         $modelClass = $this->getModel($slug);
 
@@ -90,32 +88,43 @@ class APIController extends BaseVoyagerController
     // Read
     public function show(Request $request, $id){
         $slug = $this->getSlug($request);
-        if( !$this->checkAPI($slug,'read') ) return response()->json( array('error'=>'Action not allowed') );
+        if( !$this->checkAPI($slug,'read') ) return response()->json( array('error'=>'Action not allowed'),405 );
 
         $modelClass = $this->getModel($slug);
         $model = $modelClass::find($id);
-        return $model??response()->json(array('error'=>'WHOOPS! Nothing here, please try again'));
+        return $model??response()->json(array('error'=>'WHOOPS! Nothing here, please try again'),400);
     }
 
-    // Udate
+    // Edit
     public function update(Request $request, $id){
         $slug = $this->getSlug($request); // table name
-        if( !$this->checkAPI($slug,'edit') ) return response()->json( array('error'=>'Action not allowed') );
+        if( !$this->checkAPI($slug,'edit') ) return response()->json( array('error'=>'Action not allowed'),405 );
 
         $modelClass = $this->getModel($slug);
         $update = $modelClass::find($id);
 
         $requestData = $request->all();
-        // Check for images to upload
-        foreach ($requestData as $key => $value) {
-            if( $request->hasFile($key) ){
-                $requestData[$key] = $this->upload($key, $value, $slug);
-                // Delete old image in storage
-                $oldImage = $update->where('id', $id)->first();
-                if (Storage::disk(config('voyager.storage.disk'))->exists($oldImage->{$key})) {
-                    Storage::disk(config('voyager.storage.disk'))->delete($oldImage->{$key});
-                }
-            }
+
+        $rules = array();
+
+        $messages = array();
+        
+        if (!is_null($modelClass->rules) && 
+            is_array($modelClass->rules))
+        {
+            $rules = array_merge($rules,$modelClass->rules);
+        }
+
+        if (!is_null($modelClass->messages) && is_array($modelClass->messages))
+        {
+            $messages = array_merge($messages,$modelClass->messages);
+        }
+
+        $validator = validator($requestData, $rules, $messages);
+        
+        if ($validator->fails())
+        {
+            return response()->json(["errors"=>$validator->errors()], 400);
         }
 
         $restrict = config('voyager.restrict');
@@ -125,26 +134,41 @@ class APIController extends BaseVoyagerController
         }
 
         if( $update->forceFill($requestData)->save() ){
-            return $update; //success return the model
-            //return response()->json( array('state'=>'success') );
+            return $update;
         }else{
-            return response()->json( array('state'=>'error') );
+            return response()->json( array('state'=>'error'), 400 );
         }
     }
 
-    // Insert
+    // Add
     public function store(Request $request){
         $slug = $this->getSlug($request);
-        if( !$this->checkAPI($slug,'add') ) return response()->json( array('error'=>'Action not allowed') );
+        if( !$this->checkAPI($slug,'add') ) return response()->json( array('error'=>'Action not allowed'),405 );
 
         $modelClass = $this->getModel($slug);
+        
         $requestData = $request->all();
+        
+        $rules = array();
 
-        // Check for images to upload
-        foreach ($requestData as $key => $value) {
-            if( $request->hasFile($key) ){
-                $requestData[$key] = $this->upload($key, $value, $slug);
-            }
+        $messages = array();
+        
+        if (!is_null($modelClass->rules) && 
+            is_array($modelClass->rules))
+        {
+            $rules = array_merge($rules,$modelClass->rules);
+        }
+
+        if (!is_null($modelClass->messages) && is_array($modelClass->messages))
+        {
+            $messages = array_merge($messages,$modelClass->messages);
+        }
+
+        $validator = validator($requestData, $rules, $messages);
+        
+        if ($validator->fails())
+        {
+            return response()->json(["errors"=>$validator->errors()],400);
         }
 
         $restrict = config('voyager.restrict');
@@ -152,47 +176,21 @@ class APIController extends BaseVoyagerController
             if($restrict && in_array($key, $restrict))
                 unset($requestData[$key]);
         }
+
+        if(count($requestData)==0)
+            return response()->json( array('error'=>'Bad request'),400 );
+
         if( $modelClass->forceFill($requestData)->save() ){
-            return $modelClass; // success in create the object
-            //return response()->json( array('state'=>'success') );
+            return $modelClass;
         }else{
-            return response()->json( array('state'=>'error') );
+            return response()->json( array('state'=>'error'),400 );
         }
     }
-
-    private function upload($name,$image,$slug){
-        $file = $image;
-        $dataType = DataType::where('name','=',$slug)->first();
-        $folder = $dataType ? $dataType->slug : $slug;
-        $path = $folder.'/'.date('FY').'/';
-
-        $filename = Str::random(20);
-        // Make sure the filename does not exist, if it does, just regenerate
-        while (Storage::disk(config('voyager.storage.disk'))->exists($path.$filename.'.'.$file->getClientOriginalExtension())) {
-            $filename = Str::random(20);
-        }
-        $fullPath = $path.$filename.'.'.$file->getClientOriginalExtension();
-
-        $resize_width = 1800;
-        $resize_height = null;
-        $image = Image::make($file)->resize(
-            $resize_width,
-            $resize_height,
-            function (Constraint $constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            }
-        )->encode($file->getClientOriginalExtension(), 75);
-        Storage::disk(config('voyager.storage.disk'))->put($fullPath, (string) $image, 'public');
-
-        return $fullPath;
-        
-    }
-
+    
     // Delete
     public function destroy(Request $request, $id){
         $slug = $this->getSlug($request);
-        if( !$this->checkAPI($slug,'delete') ) return response()->json( array('error'=>'Action not allowed') );
+        if( !$this->checkAPI($slug,'delete') ) return response()->json( array('error'=>'Action not allowed'),405 );
 
         $modelClass = $this->getModel($slug);
         $remove = $modelClass::find($id);
@@ -200,11 +198,10 @@ class APIController extends BaseVoyagerController
         if( $remove->delete() ){
             return response()->json( array('state'=>'success') );
         }else{
-            return response()->json( array('state'=>'error') );
+            return response()->json( array('state'=>'error'),400 );
         }
     }
-
-
+    
     // Get model by table name
     private function getModel($table){
         $name = studly_case(str_singular($table));
@@ -241,65 +238,19 @@ class APIController extends BaseVoyagerController
         return $secure;
     }
 
-
-
-    /**
-     * Remove translations, images and files related to a BREAD item.
-     *
-     * @param \Illuminate\Database\Eloquent\Model $dataType
-     * @param \Illuminate\Database\Eloquent\Model $data
-     *
-     * @return void
-     */
-    protected function cleanup($dataType, $data)
+    public function uploadResource(Request $request)
     {
-        // Delete Translations, if present
-        if (is_bread_translatable($data)) {
-            $data->deleteAttributeTranslations($data->getTranslatableAttributes());
+        if($request->hasFile('resource') && $request->file('resource')->isValid())
+        {
+            $file = $request->file('resource');
+            $type = $request->input('type');
+            $path = $type.'/'.date('FY');
+            $fullPath = \Storage::disk('public')->put($path,$file);
+            return response()->json(["resource"=>Voyager::image($fullPath)]);
         }
-
-        // Delete Images
-        $this->deleteBreadImages($data, $dataType->deleteRows->where('type', 'image'));
-
-        // Delete Files
-        foreach ($dataType->deleteRows->where('type', 'file') as $row) {
-            $files = json_decode($data->{$row->field});
-            if ($files) {
-                foreach ($files as $file) {
-                    $this->deleteFileIfExists($file->download_link);
-                }
-            }
-        }
-    }
-
-    /**
-     * Delete all images related to a BREAD item.
-     *
-     * @param \Illuminate\Database\Eloquent\Model $data
-     * @param \Illuminate\Database\Eloquent\Model $rows
-     *
-     * @return void
-     */
-    public function deleteBreadImages($data, $rows)
-    {
-        foreach ($rows as $row) {
-            $this->deleteFileIfExists($data->{$row->field});
-
-            $options = json_decode($row->details);
-
-            if (isset($options->thumbnails)) {
-                foreach ($options->thumbnails as $thumbnail) {
-                    $ext = explode('.', $data->{$row->field});
-                    $extension = '.'.$ext[count($ext) - 1];
-                    $path = str_replace($extension, '', $data->{$row->field});
-                    $thumb_name = $thumbnail->name;
-                    $this->deleteFileIfExists($path.'-'.$thumb_name.$extension);
-                }
-            }
-        }
-
-        if ($rows->count() > 0) {
-            event(new BreadImagesDeleted($data, $rows));
+        else
+        {
+            return response()->json(["error"=>"Ocurrio un error"],400);
         }
     }
 }

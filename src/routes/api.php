@@ -36,10 +36,11 @@ Route::group(['as' => 'fibonacci.'], function ()use ($namespacePrefix)
     //jwt authentication routes
     Route::post('login',$namespacePrefix.'Auth\JwtAuthController@login');
     Route::post('signup', $namespacePrefix.'Auth\JwtAuthController@signup');
+    Route::post('resources/upload',$namespacePrefix.'APIController@uploadResource');
+    Route::post('refresh',$namespacePrefix.'Auth\JwtAuthController@refresh');
     
     Route::middleware('auth:api')->group(function ()use ($namespacePrefix) {
         Route::post('logout',$namespacePrefix.'Auth\JwtAuthController@logout');
-        Route::post('refresh',$namespacePrefix.'Auth\JwtAuthController@refresh');
         Route::get('me', $namespacePrefix.'Auth\JwtAuthController@me');
         
     });

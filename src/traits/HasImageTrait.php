@@ -26,8 +26,20 @@ trait HasImageTrait
         $array = parent::toArray();
 
         foreach ($array as $key => $attribute) {
-            if (in_array($key, $this->getImageArray()) && ($attribute)) {
-                $array[$key] = env('APP_URL').'/storage/'.$attribute;
+            if (in_array($key, $this->getImageArray())) {
+
+                if(is_null($attribute))
+                {
+                    $array[$key] = url("default/avatar.png");
+                }
+                else if (filter_var($attribute, FILTER_VALIDATE_URL)) 
+                { 
+                    $array[$key] = $attribute;
+                }
+                else
+                {
+                    $array[$key] = env('APP_URL').'/storage/'.$attribute;
+                }
             }
         }
         return $array;
