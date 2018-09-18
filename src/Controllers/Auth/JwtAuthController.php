@@ -10,7 +10,8 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kadevjo\Fibonacci\Models\Client as ClientAuthenticable;
 use Validator;
-
+use Illuminate\Support\Facades\Mail;
+use Kadevjo\Fibonacci\Mail\ForgotPasswordMail;
 
 
 class JwtAuthController extends BaseController
@@ -146,5 +147,51 @@ class JwtAuthController extends BaseController
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60
             ]);
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $userClass = config('fibonacci.auth.model');
+
+        if(is_null($userClass))        
+            return response()->json( array('error'=>"Model {$userClass} isn't defined"));
+        
+        if(!$user = \App::make($userClass)  instanceof ClientAuthenticable)
+            return response()->json( array('error'=>"Model {$userClass} should extends of fibonacci client"));
+
+        $client = $userClass::where('email',$request->email)->first();
+        if(!$client)
+            return response()->json(['message' => ['email' => ['Email sent']]], 200); //The reason of 200 status code is
+            //to prevent get info through some brute force attack
+ 
+        $new_pass = $this->passGenerator();
+        $client->password = $new_pass;
+        Mail::to($client)->send(new ForgotPasswordMail($client,$new_pass));
+        //$client->save();
+        return response()->json(['message' => 'Email sent'], 200);
+    }
+
+    function passGenerator($length = 6, $atLeastChar = TRUE, $atLeastNumber = TRUE, $atLeastCap = TRUE, $atLeastSpecialChar = FALSE)
+    {
+        $chars ="abcdefghijklmnopqrstuvwxyz";
+        $numbers = "1234567890";
+        $charsCap = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $specials ="|@#~$%()=^*+[]{}-_";
+        $buffer = "";
+        $password = "";
+
+        if ($atLeastChar == TRUE) $buffer .= $chars;
+        if ($atLeastNumber == TRUE) $buffer .= $numbers;
+        if ($atLeastCap == TRUE) $buffer .= $charsCap;
+        if ($atLeastSpecialChar == TRUE) $buffer .= $specials;
+
+        for( $i=1; $i<=$length; $i++) 
+        {
+            $caracter = $buffer[rand(0,strlen($buffer)-1)];
+            $password.=$caracter;
+            $buffer = str_shuffle($buffer);
+        }
+        
+        return $password;
     }
 }
