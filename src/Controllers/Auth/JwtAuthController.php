@@ -167,7 +167,7 @@ class JwtAuthController extends BaseController
         $new_pass = $this->passGenerator();
         $client->password = $new_pass;
         Mail::to($client)->send(new ForgotPasswordMail($client,$new_pass));
-        //$client->save();
+        $client->save();
         return response()->json(['message' => 'Email sent'], 200);
     }
 
