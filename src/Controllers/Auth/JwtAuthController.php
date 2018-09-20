@@ -66,7 +66,6 @@ class JwtAuthController extends BaseController
         $validation =Validator::make($request->all(),[
             //client validation
             'email'=> 'required|email',
-            'name' => 'alpha_dash',
             'password' =>'required',
         ]);
 
