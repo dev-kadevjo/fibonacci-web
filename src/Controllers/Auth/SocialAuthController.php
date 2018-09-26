@@ -10,6 +10,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Kadevjo\Fibonacci\Fibonacci;
+use Kadevjo\Fibonacci\Models\Client as ClientAuthenticable;
 use Validator;
 
 class SocialAuthController extends BaseController
