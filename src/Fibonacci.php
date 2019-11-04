@@ -6,12 +6,14 @@ use Illuminate\Http\Request;
 use Kadevjo\Fibonacci\Helpers\FacebookAccount;
 use Kadevjo\Fibonacci\Helpers\OutlookAccount;
 use Kadevjo\Fibonacci\Helpers\TwitterAccount;
+use Kadevjo\Fibonacci\Helpers\GoogleAccount;
 
 class Fibonacci
 {
     const FACEBOOK = "facebook";
     const TWITTER = "twitter";
     const OUTLOOK = "outlook";
+    const GOOGLE = "google";
 
     public function webRoutes()
     {
@@ -37,6 +39,9 @@ class Fibonacci
                 break;
             case self::OUTLOOK:
                 $result =  OutlookAccount::Auth($socialID, $data);
+                break;
+            case self::GOOGLE:
+                $result =  GoogleAccount::Auth($socialID, $data);
                 break;
             default:
                 break;
