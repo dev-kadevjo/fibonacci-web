@@ -19,10 +19,11 @@ class CreateClientTable extends Migration
             $table->string('avatar')->nullable();
             $table->string('first_name');
             $table->string('last_name');
-			$table->string('name');
+	    $table->string('name');
             $table->longText('channels');
             $table->string('password')->nullable();
             $table->string('remember_token')->nullable();
+	    $table->string('picture_url')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
