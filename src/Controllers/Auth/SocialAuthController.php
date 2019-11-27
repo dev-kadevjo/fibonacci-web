@@ -46,9 +46,15 @@ class SocialAuthController extends BaseController
         $user = new $userClass();
         $user->name = "{$account->first_name} {$account->last_name}";
         $user->email = $account->email;
-        $user->picture = $account->picture;
+        $user->picture_url = $account->picture;
+        $user->save();
+      }else{
+        $user->name = "{$account->first_name} {$account->last_name}";
+        $user->email = $account->email;
+        $user->picture_url = $account->picture;
         $user->save();
       }
+
 
       $token = \JWTAuth::fromUser($user);
       return response()->json(['user'=>$user,'token'=>$token]);
