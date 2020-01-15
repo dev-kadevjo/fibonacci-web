@@ -24,6 +24,7 @@ return [
         'live-model' => false,
         'override' => false
     ],
+    'guards'=>'api', // 'api,driver',
     'appcenter' => [
         'Client' =>[
             'token' => null, //Api token from app center
