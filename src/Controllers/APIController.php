@@ -46,7 +46,7 @@ class APIController extends BaseVoyagerController
     public function __construct(Request $request){
         if(count($request->segments())>0){
             $slug = $this->getSlug($request);
-            $this->middleware('auth:api')->only( $this->makeSecure($slug) );
+            $this->middleware('auth:'.config('fibonacci.guards'))->only( $this->makeSecure($slug) );
         }
     }
 
