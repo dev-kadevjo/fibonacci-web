@@ -18,6 +18,7 @@ class CreateNotificationDeviceTable extends Migration
             $table->integer('client_id');
             $table->text('provider');
             $table->text('type');
+            $table->text('model');
             $table->longText('device_id');
             $table->timestamps();
         });
