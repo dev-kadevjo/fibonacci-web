@@ -105,11 +105,13 @@ class APIController extends BaseVoyagerController
 
         $requestData = $request->all();
 
+        $relations = $modelClass->modelsChildsToStore;
+
         $rules = array();
 
         $messages = array();
-        
-        if (!is_null($modelClass->rules) && 
+
+        if (!is_null($modelClass->rules) &&
             is_array($modelClass->rules))
         {
             $rules = array_merge($rules,$modelClass->rules);
@@ -121,10 +123,21 @@ class APIController extends BaseVoyagerController
         }
 
         $validator = validator($requestData, $rules, $messages);
-        
+
         if ($validator->fails())
         {
             return response()->json(["errors"=>$validator->errors()], 400);
+        }
+
+        
+        $restrict = $relations;
+        $relationsData = [];
+        foreach ($requestData as $key => $value) {
+            if($restrict && key_exists($key, $restrict))
+            {
+                $relationsData[$key]=$requestData[$key];
+                unset($requestData[$key]);
+            }
         }
 
         $restrict = config('voyager.restrict');
@@ -146,14 +159,16 @@ class APIController extends BaseVoyagerController
         if( !$this->checkAPI($slug,'add') ) return response()->json( array('error'=>'Action not allowed'),405 );
 
         $modelClass = $this->getModel($slug);
-        
+
         $requestData = $request->all();
-        
+
+        $relations = $modelClass->modelsChildsToStore;
+
         $rules = array();
 
         $messages = array();
-        
-        if (!is_null($modelClass->rules) && 
+
+        if (!is_null($modelClass->rules) &&
             is_array($modelClass->rules))
         {
             $rules = array_merge($rules,$modelClass->rules);
@@ -165,28 +180,53 @@ class APIController extends BaseVoyagerController
         }
 
         $validator = validator($requestData, $rules, $messages);
-        
+
         if ($validator->fails())
         {
             return response()->json(["errors"=>$validator->errors()],400);
         }
 
-        $restrict = config('voyager.restrict');
+        $restrict = $relations;
+        $relationsData = [];
         foreach ($requestData as $key => $value) {
-            if($restrict && in_array($key, $restrict))
+            if($restrict && key_exists($key, $restrict))
+            {
+                $relationsData[$key]=$requestData[$key];
                 unset($requestData[$key]);
+            }
         }
 
         if(count($requestData)==0)
             return response()->json( array('error'=>'Bad request'),400 );
 
         if( $modelClass->forceFill($requestData)->save() ){
+
+            // added with relation;
+            if(is_array($relations)){
+                $parentId=$modelClass->id;
+                $modelClass->with($relations);
+                foreach ($relations as $relation => $relationMetadata) {
+                
+                    if($relationMetadata){                   
+                        $childModelClass = $this->getModel($relation);
+                        //dump($relationsData);
+                        if( array_key_exists($relation, $relationsData) && !is_null($relationsData[$relation])){
+
+			            $relationsData[$relation][$relationMetadata["parentId"]]=$modelClass->id;
+                    //dd($relationsData);
+			
+                    		$childModelClass->forceFill($relationsData[$relation])->save();
+			            }
+                    }               
+                }
+            }
+            //
             return $modelClass;
         }else{
             return response()->json( array('state'=>'error'),400 );
         }
     }
-    
+
     // Delete
     public function destroy(Request $request, $id){
         $slug = $this->getSlug($request);
@@ -201,7 +241,7 @@ class APIController extends BaseVoyagerController
             return response()->json( array('state'=>'error'),400 );
         }
     }
-    
+
     // Get model by table name
     private function getModel($table){
         $name = studly_case(str_singular($table));
