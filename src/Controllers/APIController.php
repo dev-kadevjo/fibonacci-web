@@ -126,7 +126,7 @@ class APIController extends BaseVoyagerController
 
         if ($validator->fails())
         {
-            return response()->json(["errors"=>$validator->errors()], 400);
+            return response()->json(["error"=>$validator->errors()->first()], 400);
         }
 
         
@@ -183,7 +183,7 @@ class APIController extends BaseVoyagerController
 
         if ($validator->fails())
         {
-            return response()->json(["errors"=>$validator->errors()],400);
+            return response()->json(["error"=>$validator->errors()->first()],400);
         }
 
         $restrict = $relations;
@@ -209,11 +209,9 @@ class APIController extends BaseVoyagerController
                 
                     if($relationMetadata){                   
                         $childModelClass = $this->getModel($relation);
-                        //dump($relationsData);
                         if( array_key_exists($relation, $relationsData) && !is_null($relationsData[$relation])){
 
 			            $relationsData[$relation][$relationMetadata["parentId"]]=$modelClass->id;
-                    //dd($relationsData);
 			
                     		$childModelClass->forceFill($relationsData[$relation])->save();
 			            }
