@@ -43,10 +43,11 @@ class APIController extends BaseVoyagerController
 {
     use BreadRelationshipParser;
 
-    public function __construct(Request $request){
-        if(count($request->segments())>0){
+    public function __construct(Request $request)
+    {
+        if (count($request->segments()) > 0) {
             $slug = $this->getSlug($request);
-            $this->middleware('auth:'.config('fibonacci.guards'))->only( $this->makeSecure($slug) );
+            $this->middleware('auth:' . config('fibonacci.guards'))->only($this->makeSecure($slug));
         }
     }
 
@@ -55,30 +56,27 @@ class APIController extends BaseVoyagerController
         if (isset($this->slug)) {
             $slug = $this->slug;
         } else {
-            $slug = explode ('/',Route::getFacadeRoot()->current()->uri())[1];
+            $slug = explode('/', Route::getFacadeRoot()->current()->uri())[1];
         }
         return $slug;
     }
     // Browse
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         $slug = $this->getSlug($request);
 
-        if( !$this->checkAPI($slug,'browse') ) return  response()->json(array('error'=>'Action not allowed'),405);
+        if (!$this->checkAPI($slug, 'browse')) return  response()->json(array('error' => 'Action not allowed'), 405);
 
         $modelClass = $this->getModel($slug);
 
-        if($request->has('filter'))
-        {
+        if ($request->has('filter')) {
             $filters = json_decode($request->input('filter'));
             $query = $modelClass::query();
-            foreach ($filters as $filter)
-            {
-                call_user_func_array( array($query, $filter->method), $filter->parameters );
+            foreach ($filters as $filter) {
+                call_user_func_array(array($query, $filter->method), $filter->parameters);
             }
             $response = $query->get();
-        }
-        else
-        {
+        } else {
             $response = $modelClass::get();
         }
 
@@ -86,24 +84,28 @@ class APIController extends BaseVoyagerController
     }
 
     // Read
-    public function show(Request $request, $id){
+    public function show(Request $request, $id)
+    {
         $slug = $this->getSlug($request);
-        if( !$this->checkAPI($slug,'read') ) return response()->json( array('error'=>'Action not allowed'),405 );
+        if (!$this->checkAPI($slug, 'read')) return response()->json(array('error' => 'Action not allowed'), 405);
 
         $modelClass = $this->getModel($slug);
         $model = $modelClass::find($id);
-        return $model??response()->json(array('error'=>'WHOOPS! Nothing here, please try again'),400);
+        return $model ?? response()->json(array('error' => 'WHOOPS! Nothing here, please try again'), 400);
     }
 
     // Edit
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
         $slug = $this->getSlug($request); // table name
-        if( !$this->checkAPI($slug,'edit') ) return response()->json( array('error'=>'Action not allowed'),405 );
+        if (!$this->checkAPI($slug, 'edit')) return response()->json(array('error' => 'Action not allowed'), 405);
 
         $modelClass = $this->getModel($slug);
         $update = $modelClass::find($id);
 
-        $requestData = $request->all();
+        //$requestData = $request->all();
+
+        $requestData = $this->mapDataArray($request->all());
 
         $relations = $modelClass->modelsChildsToStore;
 
@@ -111,56 +113,62 @@ class APIController extends BaseVoyagerController
 
         $messages = array();
 
-        if (!is_null($modelClass->rules) &&
-            is_array($modelClass->rules))
-        {
-            $rules = array_merge($rules,$modelClass->rules);
+        if (
+            !is_null($modelClass->rules) &&
+            is_array($modelClass->rules)
+        ) {
+            $rules = array_merge($rules, $modelClass->rules);
         }
 
-        if (!is_null($modelClass->messages) && is_array($modelClass->messages))
-        {
-            $messages = array_merge($messages,$modelClass->messages);
+        if (!is_null($modelClass->messages) && is_array($modelClass->messages)) {
+            $messages = array_merge($messages, $modelClass->messages);
         }
 
         $validator = validator($requestData, $rules, $messages);
 
-        if ($validator->fails())
-        {
-            return response()->json(["error"=>$validator->errors()->first()], 400);
+        if ($validator->fails()) {
+            return response()->json(["error" => $validator->errors()->first()], 400);
         }
 
-        
+
         $restrict = $relations;
         $relationsData = [];
         foreach ($requestData as $key => $value) {
-            if($restrict && key_exists($key, $restrict))
-            {
-                $relationsData[$key]=$requestData[$key];
+            if ($restrict && key_exists($key, $restrict)) {
+                $relationsData[$key] = $requestData[$key];
                 unset($requestData[$key]);
             }
         }
 
         $restrict = config('voyager.restrict');
         foreach ($requestData as $key => $value) {
-            if($restrict && in_array($key, $restrict))
+            if ($restrict && in_array($key, $restrict))
                 unset($requestData[$key]);
         }
 
-        if( $update->forceFill($requestData)->save() ){
+        if ($update->forceFill($requestData)->save()) {
             return $update;
-        }else{
-            return response()->json( array('state'=>'error'), 400 );
+        } else {
+            return response()->json(array('state' => 'error'), 400);
         }
     }
 
     // Add
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $slug = $this->getSlug($request);
-        if( !$this->checkAPI($slug,'add') ) return response()->json( array('error'=>'Action not allowed'),405 );
+        if (!$this->checkAPI($slug, 'add')) return response()->json(array('error' => 'Action not allowed'), 405);
 
         $modelClass = $this->getModel($slug);
 
-        $requestData = $request->all();
+        $requestData = $this->mapDataArray($request->all());
+
+        /*$requestTemp = [];
+        foreach ($requestData as $key => $value) {
+                $requestTemp[strtolower($key)]=$requestData[$key];
+        }
+        $requestData = $requestTemp;*/
+
 
         $relations = $modelClass->modelsChildsToStore;
 
@@ -168,127 +176,137 @@ class APIController extends BaseVoyagerController
 
         $messages = array();
 
-        if (!is_null($modelClass->rules) &&
-            is_array($modelClass->rules))
-        {
-            $rules = array_merge($rules,$modelClass->rules);
+        if (
+            !is_null($modelClass->rules) &&
+            is_array($modelClass->rules)
+        ) {
+            $rules = array_merge($rules, $modelClass->rules);
         }
 
-        if (!is_null($modelClass->messages) && is_array($modelClass->messages))
-        {
-            $messages = array_merge($messages,$modelClass->messages);
+        if (!is_null($modelClass->messages) && is_array($modelClass->messages)) {
+            $messages = array_merge($messages, $modelClass->messages);
         }
 
         $validator = validator($requestData, $rules, $messages);
 
-        if ($validator->fails())
-        {
-            return response()->json(["error"=>$validator->errors()->first()],400);
+        if ($validator->fails()) {
+            return response()->json(["error" => $validator->errors()->first()], 400);
         }
 
         $restrict = $relations;
         $relationsData = [];
         foreach ($requestData as $key => $value) {
-            if($restrict && key_exists($key, $restrict))
-            {
-                $relationsData[$key]=$requestData[$key];
+            if ($restrict && key_exists($key, $restrict)) {
+                $relationsData[$key] = $requestData[$key];
                 unset($requestData[$key]);
             }
         }
 
-        if(count($requestData)==0)
-            return response()->json( array('error'=>'Bad request'),400 );
+        if (count($requestData) == 0)
+            return response()->json(array('error' => 'Bad request'), 400);
 
-        if( $modelClass->forceFill($requestData)->save() ){
+        if ($modelClass->forceFill($requestData)->save()) {
 
             // added with relation;
-            if(is_array($relations)){
-                $parentId=$modelClass->id;
+            if (is_array($relations)) {
+                $parentId = $modelClass->id;
                 $modelClass->with($relations);
                 foreach ($relations as $relation => $relationMetadata) {
-                
-                    if($relationMetadata){                   
-                        $childModelClass = $this->getModel($relation);
-                        if( array_key_exists($relation, $relationsData) && !is_null($relationsData[$relation])){
 
-			            $relationsData[$relation][$relationMetadata["parentId"]]=$modelClass->id;
-			
-                    		$childModelClass->forceFill($relationsData[$relation])->save();
-			            }
-                    }               
+                    if ($relationMetadata) {
+                        $childModelClass = $this->getModel($relation);
+                        //dump($relationsData);
+                        if (array_key_exists($relation, $relationsData) && !is_null($relationsData[$relation])) {
+
+                            $relationsData[$relation][$relationMetadata["parentId"]] = $modelClass->id;
+                            //dd($relationsData);
+
+                            $childModelClass->forceFill($relationsData[$relation])->save();
+                        }
+                    }
                 }
             }
             //
             return $modelClass;
-        }else{
-            return response()->json( array('state'=>'error'),400 );
+        } else {
+            return response()->json(array('state' => 'error'), 400);
         }
     }
 
     // Delete
-    public function destroy(Request $request, $id){
+    public function destroy(Request $request, $id)
+    {
         $slug = $this->getSlug($request);
-        if( !$this->checkAPI($slug,'delete') ) return response()->json( array('error'=>'Action not allowed'),405 );
+        if (!$this->checkAPI($slug, 'delete')) return response()->json(array('error' => 'Action not allowed'), 405);
 
         $modelClass = $this->getModel($slug);
         $remove = $modelClass::find($id);
 
-        if( $remove->delete() ){
-            return response()->json( array('state'=>'success') );
-        }else{
-            return response()->json( array('state'=>'error'),400 );
+        if ($remove->delete()) {
+            return response()->json(array('state' => 'success'));
+        } else {
+            return response()->json(array('state' => 'error'), 400);
         }
     }
 
     // Get model by table name
-    private function getModel($table){
+    private function getModel($table)
+    {
         $name = studly_case(str_singular($table));
         try {
-            $entity = "App\\".$name;
+            $entity = "App\\" . $name;
             $modelClass =  \App::make($entity);
-        }catch (Exception $e) {
-            $entity = "TCG\Voyager\Models\\".$name;
+        } catch (Exception $e) {
+            $entity = "TCG\Voyager\Models\\" . $name;
             $modelClass =  \App::make($entity);
         }
         return $modelClass;
     }
     // Check if api was configured
-    private function checkAPI($table,$action){
-        $api = ApiConfig::where('table_name','=',$table)->first();
-        if(!$api) return false;
+    private function checkAPI($table, $action)
+    {
+        $api = ApiConfig::where('table_name', '=', $table)->first();
+        if (!$api) return false;
 
         $options = json_decode($api->config);
         return $options->{$action}->enable;
     }
     // Create array to auth:api
-    private function makeSecure($table){
+    private function makeSecure($table)
+    {
         $secure = array();
-        $api = ApiConfig::where('table_name','=',$table)->first();
-        if($api){
+        $api = ApiConfig::where('table_name', '=', $table)->first();
+        if ($api) {
             $options = json_decode($api->config);
 
-            if( $options->browse->secure ) array_push($secure, 'index');
-            if( $options->read->secure ) array_push($secure, 'show');
-            if( $options->edit->secure ) array_push($secure, 'update');
-            if( $options->add->secure ) array_push($secure, 'store');
-            if( $options->delete->secure ) array_push($secure, 'destroy');
+            if ($options->browse->secure) array_push($secure, 'index');
+            if ($options->read->secure) array_push($secure, 'show');
+            if ($options->edit->secure) array_push($secure, 'update');
+            if ($options->add->secure) array_push($secure, 'store');
+            if ($options->delete->secure) array_push($secure, 'destroy');
         }
         return $secure;
     }
 
     public function uploadResource(Request $request)
     {
-        if($request->hasFile('resource') && $request->file('resource')->isValid())
-        {
+        if ($request->hasFile('resource') && $request->file('resource')->isValid()) {
             $file = $request->file('resource');
             $type = $request->input('type');
-            $path = $type.'/'.date('FY');
-            $fullPath = \Storage::disk('public')->put($path,$file);
-            return response()->json(["resource"=>Voyager::image($fullPath)]);
+            $path = $type . '/' . date('FY');
+            $fullPath = \Storage::disk('public')->put($path, $file);
+            return response()->json(["resource" => Voyager::image($fullPath)]);
+        } else {
+            return response()->json(["error" => "Ocurrio un error"], 400);
         }
-        else
-        {
-            return response()->json(["error"=>"Ocurrio un error"],400);
-        }
+    }
+
+    public function mapDataArray($arr)
+    {
+        return array_map(function ($item) {
+            if (is_array($item))
+                $item = $this->mapDataArray($item);
+            return $item;
+        }, array_change_key_case($arr, CASE_LOWER));
     }
 }
