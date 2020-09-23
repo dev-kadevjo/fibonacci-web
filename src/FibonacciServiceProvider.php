@@ -15,6 +15,8 @@ class FibonacciServiceProvider extends ServiceProvider
     {
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'fibonacci');
         $this->loadViewsFrom(__DIR__.'/views', 'fibonacci');
+        $this->publishMigrations();
+
     }
     /**
      * Register the application services.
@@ -62,5 +64,16 @@ class FibonacciServiceProvider extends ServiceProvider
         foreach ($publishable as $group => $paths) {
             $this->publishes($paths, $group);
         }
+    }
+
+    private function publishMigrations()
+    {
+        $path = $this->getMigrationsPath();
+        $this->publishes([$path => database_path('migrations')], 'migrations');
+    }
+
+    private function getMigrationsPath()
+    {
+        return __DIR__ . '/database/migrations/';
     }
 }

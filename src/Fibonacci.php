@@ -11,12 +11,12 @@ class Fibonacci
     const TWITTER = "twitter";
     const OUTLOOK = "outlook";
 
-    public function webRoutes()
+    public static function webRoutes()
     {
         require __DIR__.'/routes/web.php';
     }
 
-    public function apiRoutes()
+    public static function apiRoutes()
     {
         require __DIR__.'/routes/api.php';
     }
