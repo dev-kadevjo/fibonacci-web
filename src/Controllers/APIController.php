@@ -46,7 +46,7 @@ class APIController extends BaseVoyagerController
 
         if(count($request->segments())>0){
             $slug = $this->getSlug($request);
-            $this->middleware('auth:api')->only( $this->makeSecure($slug) );
+            $this->middleware('auth:app')->only( $this->makeSecure($slug) );
         }
     }
 
@@ -198,9 +198,9 @@ class APIController extends BaseVoyagerController
 
     // Get model by table name
     private function getModel($table){
-        $name = studly_case(str_singular($table));
+        $name = Str::studly(Str::singular($table));
         try {
-            $entity = "App\\".$name;
+            $entity = "App\Models\\".$name;
             $modelClass =  \App::make($entity);
         }catch (Exception $e) {
             $entity = "TCG\Voyager\Models\\".$name;
@@ -216,7 +216,7 @@ class APIController extends BaseVoyagerController
         $options = json_decode($api->config);
         return $options->{$action}->enable;
     }
-    // Create array to auth:api
+    // Create array to auth:app
     private function makeSecure($table){
         $secure = array();
         $api = ApiConfig::where('table_name','=',$table)->first();
